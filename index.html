@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ku" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TopKurd Official</title>
+    <style>
+        :root { --main: #4b0082; --gold: #ffd700; --white: #ffffff; }
+        body { margin: 0; font-family: 'Tahoma', sans-serif; background: var(--main); color: #333; overflow-x: hidden; }
+
+        #loadingScreen { position: fixed; inset: 0; background: var(--main); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 3000; color: white; }
+        .loader { border: 5px solid white; border-top: 5px solid var(--gold); border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .container { display: none; padding: 20px; flex-direction: column; align-items: center; min-height: 100vh; box-sizing: border-box; }
+        .active { display: flex !important; }
+        .card { background: white; padding: 20px; border-radius: 20px; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); margin-top: 15px; }
+
+        .header-top { width: 100%; display: flex; justify-content: space-between; align-items: center; color: white; padding: 10px 5px; font-weight: bold; }
+
+        input { width: 100%; padding: 14px; margin: 8px 0; border-radius: 12px; border: 1px solid #ddd; text-align: center; outline: none; }
+        .btn { width: 100%; padding: 15px; background: var(--main); color: white; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        
+        .navbar { position: fixed; bottom: 0; width: 100%; background: white; display: none; justify-content: space-around; padding: 12px 0; border-top: 2px solid var(--gold); z-index: 1000; }
+        .nav-item { cursor: pointer; color: #777; font-size: 12px; text-align: center; flex: 1; }
+        .nav-active { color: var(--main); font-weight: bold; }
+
+        .social-links { display: flex; justify-content: center; gap: 30px; margin-top: 25px; font-size: 45px; }
+        .social-links a { text-decoration: none; }
+
+        /* ستایلی لیستی براوەکان */
+        .winner-row { display: flex; justify-content: space-between; align-items: center; background: #f9f9f9; margin: 8px 0; padding: 12px; border-radius: 12px; border-right: 5px solid var(--gold); font-size: 14px; }
+        .winner-price { color: green; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div id="loadingScreen">
+        <div class="loader"></div>
+        <h1 style="color: var(--gold)">TOP KURD</h1>
+        <p>تکایە چاوەڕوانبە...</p>
+    </div>
+
+    <div id="authPage" class="container">
+        <div class="card" style="margin-top: 50px;">
+            <h1 style="color: var(--main)">TopKurd</h1>
+            <input type="text" id="uName" placeholder="ناوی تەواو">
+            <input type="email" id="uEmail" placeholder="جیمێڵ">
+            <input type="password" id="uPass" placeholder="پاسۆرد">
+            <button class="btn" onclick="loginAction()">چوونە ژوورەوە</button>
+        </div>
+    </div>
+
+    <div id="dashPage" class="container">
+        <div class="header-top">
+            <span id="helloTop">سڵاو</span>
+            <span>👤 <span id="pCount">300</span></span>
+        </div>
+        <div class="card">
+            <p>کاتی ماوە بۆ یاری ئەمشەو:</p>
+            <h1 id="clock" style="color: var(--main); font-size: 45px; margin: 10px 0;">00:00:00</h1>
+            <button class="btn" style="background:#888" disabled>یاری قفڵە</button>
+        </div>
+        <div class="card" style="text-align: right; background: #fffbe6; border: 1px dashed var(--gold);">
+            <p style="margin: 0; font-size: 14px;">📢 ئاگاداری: یاری ئەمشەو دیارییەکی گەورەی تێدایە!</p>
+        </div>
+    </div>
+
+    <div id="winnersPage" class="container">
+        <div style="color:white; margin-bottom:10px; font-weight:bold; font-size: 20px;">🏆 لیستی براوەکان</div>
+        <div class="card" style="text-align: right;">
+            <div class="winner-row"><span>١. ئەحمەد دۆلار</span> <span class="winner-price">$10</span></div>
+            <div class="winner-row"><span>٢. میران عەلی</span> <span class="winner-price">$5</span></div>
+            <div class="winner-row"><span>٣. سۆما حەمە</span> <span class="winner-price">$5</span></div>
+            <div class="winner-row"><span>٤. پێشەوا کورد</span> <span class="winner-price">$5</span></div>
+            <div class="winner-row"><span>٥. کاروان مەلا</span> <span class="winner-price">$5</span></div>
+        </div>
+    </div>
+
+    <div id="accPage" class="container">
+        <div class="card">
+            <div style="font-size: 60px;">👤</div>
+            <h2 id="displayName">ناو</h2>
+            <p id="displayEmail" style="color:#666"></p>
+            <hr>
+            <div style="text-align:right; font-size: 14px;">
+                <p>🌍 **زمان:** کوردی (سۆرانی)</p>
+                <p>ℹ️ **دەربارە:** TopKurd سەکۆیەکی ڕاستەوخۆیە بۆ پێشبڕکێی زانیاری گشتی.</p>
+            </div>
+            
+            <div class="social-links">
+                <a href="https://t.me/top_kurd1">✈️</a>
+                <a href="https://m.me/mabast121092">💬</a>
+                <a href="tel:07759777929">📞</a>
+            </div>
+            
+            <button class="btn" style="background:red; margin-top:30px;" onclick="logout()">دەرچوون</button>
+        </div>
+    </div>
+
+    <div id="nav" class="navbar">
+        <div class="nav-item nav-active" onclick="showTab('dashPage', this)">🏠<br>سەرەکی</div>
+        <div class="nav-item" onclick="showTab('winnersPage', this)">🏆<br>براوەکان</div>
+        <div class="nav-item" onclick="showTab('accPage', this)">👤<br>ئەکاونت</div>
+    </div>
+
+    <script>
+        setTimeout(() => {
+            document.getElementById('loadingScreen').style.display = 'none';
+            const saved = localStorage.getItem('topkurd_user');
+            if (saved) {
+                const user = JSON.parse(saved);
+                goToDash(user.name, user.email);
+            } else {
+                document.getElementById('authPage').classList.add('active');
+            }
+        }, 4000);
+
+        function loginAction() {
+            const name = document.getElementById('uName').value;
+            const email = document.getElementById('uEmail').value;
+            if (!name || !email) return alert("تکایە خانەکان پڕ بکەرەوە");
+            const userData = { name: name, email: email };
+            localStorage.setItem('topkurd_user', JSON.stringify(userData));
+            goToDash(name, email);
+        }
+
+        function goToDash(name, email) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById('dashPage').classList.add('active');
+            document.getElementById('nav').style.display = 'flex';
+            document.getElementById('helloTop').innerText = "سڵاو، " + name;
+            document.getElementById('displayName').innerText = name;
+            document.getElementById('displayEmail').innerText = email;
+            startClock();
+        }
+
+        function startClock() {
+            setInterval(() => {
+                const now = new Date();
+                const target = new Date(); target.setHours(21, 0, 0, 0);
+                let diff = target - now; if(diff < 0) diff += 86400000;
+                const h = Math.floor(diff/3600000).toString().padStart(2,'0');
+                const m = Math.floor((diff%3600000)/60000).toString().padStart(2,'0');
+                const s = Math.floor((diff%60000)/1000).toString().padStart(2,'0');
+                document.getElementById('clock').innerText = `${h}:${m}:${s}`;
+            }, 1000);
+        }
+
+        function showTab(id, el) {
+            document.querySelectorAll('.container').forEach(c => c.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('nav-active'));
+            el.classList.add('nav-active');
+        }
+
+        function logout() { localStorage.removeItem('topkurd_user'); location.reload(); }
+    </script>
+</body>
+</html>
