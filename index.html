@@ -5,1031 +5,109 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <title>CoinZilla</title>
   
-  <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Telegram Mini App SDK -->
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-  <!-- AdsGram SDK (loads automatically; only active when blockId is set) -->
   <script src="https://sad.adsgram.ai/js/sad.min.js" async></script>
-
-  <script src='//libtl.com/sdk.js' data-zone='11192726' data-sdk='show_11192726'></script>
 
   <script>
     const CONFIG = {
-
-      adsgram: 'both',
+      adNetwork: 'adsgram',
       adsgramBlockId: '37744',
-
-
-
-      monetagZoneId: '11192726',
-      monetagShowFn: 'show_11192726',
-
-      // ── Rewards ───────────────────────────────────────────────────
       rewardPerAd: 10,       
       maxAdsPerDay: 10,     
-
-      // ── Contact / Branding ────────────────────────────────────────
       telegramContact: 'https://t.me/DefiDragon',  
       appName: 'CoinZilla',                         
     };
-    </script>
+  </script>
 
   <style>
     :root {
-      --bg:          #0f0f0f;
-      --bg2:         #1a1a1a;
-      --bg-card:     #1e1e1e;
-      --primary:     #8774e1;
-      --primary-dk:  #6c5ce7;
-      --gold:        #f0c040;
-      --text:        #ffffff;
-      --hint:        #aaaaaa;
-      --red:         #e53935;
-      --green:       #4caf50;
+      --bg: #0f0f0f;
+      --primary: #8774e1;
+      --primary-dk: #6c5ce7;
+      --gold: #f0c040;
+      --text: #ffffff;
+      --hint: #aaaaaa;
     }
-
-    * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 480px;
-      margin: 0 auto;
-      min-height: 100vh;
-      padding-bottom: 80px;
-      overflow-x: hidden;
-    }
-
-    /* ── Animations ───────────────────────────────────────────── */
-    @keyframes float {
-      0%,100% { transform: translateY(0)   rotate(-2deg); }
-      50%      { transform: translateY(-12px) rotate(2deg); }
-    }
-    @keyframes glow-pulse {
-      0%,100% { box-shadow: 0 0 20px rgba(135,116,225,.3); }
-      50%      { box-shadow: 0 0 45px rgba(135,116,225,.7); }
-    }
-    @keyframes shimmer {
-      0%   { background-position: -200% 0; }
-      100% { background-position:  200% 0; }
-    }
-    @keyframes fadeUp {
-      from { opacity:0; transform:translateY(18px); }
-      to   { opacity:1; transform:translateY(0);    }
-    }
-    @keyframes popBounce {
-      0%,100% { transform: scale(1);   }
-      40%      { transform: scale(1.35); }
-      70%      { transform: scale(.9);  }
-    }
-    @keyframes spin {
-      to { transform: rotate(360deg); }
-    }
-    @keyframes slideDown {
-      from { transform:translateX(-50%) translateY(-80px); opacity:0; }
-      to   { transform:translateX(-50%) translateY(0);     opacity:1; }
-    }
-    @keyframes slideUp {
-      from { transform:translateX(-50%) translateY(0);     opacity:1; }
-      to   { transform:translateX(-50%) translateY(-80px); opacity:0; }
-    }
-    @keyframes coinFloat {
-      0%   { transform:translateY(0)   scale(1);   opacity:1; }
-      100% { transform:translateY(-60px) scale(1.4); opacity:0; }
-    }
-
-    .dragon-float   { animation: float 3s ease-in-out infinite; display:inline-block; }
-    .glow-card      { animation: glow-pulse 2.5s ease-in-out infinite; }
-    .fade-up        { animation: fadeUp .35s ease-out; }
-    .pop-bounce     { animation: popBounce .5s ease; }
-    .spin-anim      { animation: spin .8s linear infinite; }
-
-    /* ── Balance card ─────────────────────────────────────────── */
-    .balance-card {
-      background: linear-gradient(135deg, #1a1030 0%, #2d1f5e 50%, #170f2e 100%);
-      border: 1px solid rgba(135,116,225,.35);
-    }
-
-    /* ── Watch-Ad button ──────────────────────────────────────── */
-    .watch-btn {
-      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dk) 100%);
-      position: relative; overflow: hidden;
-      transition: transform .1s, opacity .2s;
-    }
-    .watch-btn::before {
-      content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,.25), transparent);
-      animation: shimmer 2s infinite;
-    }
-    .watch-btn:not(:disabled):active { transform: scale(.97); }
-    .watch-btn:disabled {
-      background: #333; cursor:not-allowed; opacity:.7;
-    }
-    .watch-btn:disabled::before { display:none; }
-
-    /* ── Progress bar ─────────────────────────────────────────── */
-    .prog-fill {
-      background: linear-gradient(90deg, var(--primary), var(--gold));
-      transition: width .5s ease;
-    }
-
-    /* ── Bottom nav ──────────────────────────────────────────── */
-    .bottom-nav {
-      position:fixed; bottom:0; left:50%; transform:translateX(-50%);
-      width:100%; max-width:480px;
-      background: rgba(20,20,20,.96);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(135,116,225,.2);
-      z-index: 50;
-    }
-    .nav-btn       { transition: all .2s; }
-    .nav-btn.active .ni { color: var(--primary); transform: scale(1.15) translateY(-2px); }
-    .nav-btn.active .nl { color: var(--primary); font-weight:700; }
-    .ni { display:block; font-size:1.4rem; transition: transform .2s, color .2s; }
-    .nl { display:block; font-size:.65rem; color: var(--hint); margin-top:2px; }
-
-    /* ── Page ───────────────────────────────────────────────── */
+    body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 100px; }
+    .balance-card { background: linear-gradient(135deg, #1a1030 0%, #2d1f5e 100%); border: 1px solid rgba(135,116,225,.35); }
+    .watch-btn { background: linear-gradient(135deg, #f0c040 0%, #8774e1 100%); }
+    .watch-btn:disabled { background: #333; opacity:.7; }
     .page { display:none; }
-    .page.active { display:block; animation: fadeUp .3s ease-out; }
-
-    /* ── Stat card ───────────────────────────────────────────── */
-    .stat-card {
-      background: var(--bg-card);
-      border: 1px solid rgba(135,116,225,.15);
-      transition: transform .15s;
-    }
-    .stat-card:active { transform: scale(.97); }
-
-    /* ── Feature row ─────────────────────────────────────────── */
-    .feat-row {
-      background: var(--bg-card);
-      border: 1px solid rgba(135,116,225,.15);
-    }
-
-    /* ── Lock page gradient ──────────────────────────────────── */
-    .lock-bg {
-      background: radial-gradient(ellipse at 50% 0%, rgba(135,116,225,.12) 0%, transparent 70%), var(--bg);
-    }
-
-    /* ── Toast ───────────────────────────────────────────────── */
-    #toast {
-      position:fixed; top:16px; left:50%;
-      transform: translateX(-50%) translateY(-80px);
-      z-index:9999; max-width:300px; width:90%;
-      border-radius:14px; padding:10px 20px;
-      font-size:.875rem; font-weight:600; text-align:center;
-      pointer-events:none;
-    }
-    #toast.show { animation: slideDown .35s ease forwards; }
-    #toast.hide { animation: slideUp  .35s ease forwards; }
-
-    /* ── Floating coin particle ──────────────────────────────── */
-    .coin-particle {
-      position:fixed; font-size:1.4rem; pointer-events:none; z-index:9998;
-      animation: coinFloat .8s ease-out forwards;
-    }
-
-    /* ── Activity list ───────────────────────────────────────── */
-    .activity-row {
-      background: var(--bg-card);
-      border: 1px solid rgba(135,116,225,.1);
-    }
-
-    /* ── Scrollbar ───────────────────────────────────────────── */
-    ::-webkit-scrollbar { width:0; }
-
-    /* ── Loading bar ─────────────────────────────────────────── */
-    .load-bar {
-      background: linear-gradient(90deg, var(--primary), var(--gold));
-      border-radius: 99px;
-      transition: width .15s ease;
-    }
-
-    /* Polished UI skin */
-    body {
-      background:
-        radial-gradient(circle at 50% -120px, rgba(240,192,64,.20), transparent 330px),
-        radial-gradient(circle at -80px 160px, rgba(135,116,225,.24), transparent 260px),
-        linear-gradient(180deg, #101014 0%, #0a0a0d 62%, #07070a 100%);
-    }
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      background-image:
-        linear-gradient(rgba(255,255,255,.035) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,.025) 1px, transparent 1px);
-      background-size: 34px 34px;
-      mask-image: linear-gradient(to bottom, rgba(0,0,0,.7), transparent 72%);
-      z-index: -1;
-    }
-    body { padding-bottom: 108px; }
-    .app-header {
-      position: sticky;
-      top: 0;
-      z-index: 20;
-      background: linear-gradient(180deg, rgba(16,16,20,.96), rgba(16,16,20,.72));
-      backdrop-filter: blur(18px);
-      border-bottom: 1px solid rgba(255,255,255,.06);
-    }
-    .avatar-ring {
-      box-shadow: 0 0 0 4px rgba(135,116,225,.12), 0 14px 32px rgba(0,0,0,.35);
-    }
-    .coin-badge {
-      background: linear-gradient(135deg, rgba(240,192,64,.18), rgba(135,116,225,.14));
-      border: 1px solid rgba(240,192,64,.28);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 10px 28px rgba(0,0,0,.24);
-    }
-    .network-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      width: fit-content;
-      border: 1px solid rgba(76,175,80,.28);
-      background: rgba(76,175,80,.10);
-      color: #7ee787;
-      border-radius: 999px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      letter-spacing: .02em;
-    }
-    .balance-card {
-      background:
-        radial-gradient(circle at 82% 4%, rgba(240,192,64,.28), transparent 170px),
-        linear-gradient(145deg, rgba(42,31,92,.96), rgba(20,16,38,.98) 58%, rgba(12,12,16,.98));
-      border: 1px solid rgba(255,255,255,.10);
-      box-shadow: 0 24px 60px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.10);
-    }
-    .balance-card::after {
-      content: '';
-      position: absolute;
-      inset: 1px;
-      border-radius: 23px;
-      pointer-events: none;
-      background: linear-gradient(135deg, rgba(255,255,255,.13), transparent 30%, transparent 70%, rgba(240,192,64,.08));
-    }
-    .balance-metric {
-      background: rgba(255,255,255,.075);
-      border: 1px solid rgba(255,255,255,.09);
-      border-radius: 16px;
-      padding: 10px 12px;
-    }
-    .watch-btn {
-      background:
-        radial-gradient(circle at 20% 0%, rgba(255,255,255,.32), transparent 130px),
-        linear-gradient(135deg, #f0c040 0%, #d98c18 42%, #8774e1 100%);
-      border: 1px solid rgba(255,255,255,.20);
-      box-shadow: 0 18px 44px rgba(135,116,225,.30), 0 10px 24px rgba(240,192,64,.16);
-    }
-    .watch-btn:disabled {
-      background: linear-gradient(135deg, #2a2a2f, #1a1a20);
-      border-color: rgba(255,255,255,.08);
-      box-shadow: none;
-    }
-    .stat-card,
-    .activity-row,
-    .feat-row {
-      background: linear-gradient(180deg, rgba(255,255,255,.075), rgba(255,255,255,.035));
-      border: 1px solid rgba(255,255,255,.08);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
-    }
-    .stat-card {
-      border-radius: 20px;
-    }
-    .stat-icon {
-      width: 36px;
-      height: 36px;
-      margin: 0 auto 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 14px;
-      background: rgba(135,116,225,.16);
-    }
-    .section-title {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      color: #d8d4ff;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      margin-bottom: 10px;
-    }
-    .empty-card {
-      border: 1px dashed rgba(255,255,255,.12);
-      background: rgba(255,255,255,.035);
-      border-radius: 22px;
-    }
-    .bottom-nav {
-      bottom: 10px;
-      width: calc(100% - 24px);
-      border: 1px solid rgba(255,255,255,.10);
-      border-radius: 24px;
-      background: rgba(14,14,18,.82);
-      box-shadow: 0 18px 40px rgba(0,0,0,.44);
-    }
-    .nav-btn.active {
-      background: rgba(135,116,225,.16);
-    }
-    .nav-btn.active .ni,
-    .nav-btn.active .nl {
-      color: #f0c040;
-    }
+    .page.active { display:block; }
+    .bottom-nav { position:fixed; bottom:10px; width:100%; max-width:480px; background: rgba(20,20,20,.96); border-top: 1px solid rgba(135,116,225,.2); z-index: 50; }
   </style>
 </head>
 
 <body>
+<div id="toast" style="position:fixed; top:20px; left:50%; transform:translateX(-50%); z-index:9999; padding:10px 20px; background:#333; color:white; border-radius:10px; display:none;"></div>
 
-<!-- ════════════════ TOAST ════════════════ -->
-<div id="toast"></div>
+<div id="app">
+  <div id="page-home" class="page active">
+    <div class="px-4 pt-5">
+      <div class="balance-card rounded-3xl p-5">
+        <div class="text-sm">Total Balance</div>
+        <div class="text-5xl font-black" id="main-bal">0</div>
+      </div>
+    </div>
 
-<!-- ════════════════ LOADING SCREEN ════════════════ -->
-<div id="loading" class="fixed inset-0 bg-[#0f0f0f] flex flex-col items-center justify-center z-50">
-  <div class="dragon-float text-8xl mb-4 select-none">🐉</div>
-  <div class="text-2xl font-black text-white mb-1 tracking-wide">CoinZilla</div>
-  <div class="text-xs text-[#aaaaaa] mb-8 tracking-widest uppercase">Earn while you watch</div>
-  <div class="w-52 h-1.5 bg-[#2a2a2a] rounded-full overflow-hidden">
-    <div id="load-bar" class="load-bar h-full" style="width:0%"></div>
+    <div class="px-4 pt-4">
+      <button id="watch-btn" onclick="watchAd()" class="watch-btn w-full py-5 rounded-2xl font-bold">
+        Watch Ad & Earn
+      </button>
+    </div>
   </div>
+
+  <nav class="bottom-nav flex justify-around p-4">
+    <button onclick="switchPage('home', this)">Home</button>
+    <button onclick="switchPage('tasks', this)">Tasks</button>
+  </nav>
 </div>
 
-<!-- ════════════════ APP ════════════════ -->
-<div id="app" class="hidden">
-
-  <!-- ╔══════════════════════════════════╗ -->
-  <!-- ║          HOME PAGE               ║ -->
-  <!-- ╚══════════════════════════════════╝ -->
-  <div id="page-home" class="page active">
-
-    <!-- Header -->
-    <div class="app-header px-4 pt-5 pb-3 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div id="user-avatar"
-             class="avatar-ring w-11 h-11 rounded-full bg-gradient-to-br from-[#f0c040] via-[#8774e1] to-[#4c3dbb] flex items-center justify-center text-lg font-bold overflow-hidden select-none">
-          🐉
-        </div>
-        <div>
-          <div class="text-[10px] text-[#f0c040] uppercase tracking-widest font-bold">CoinZilla</div>
-          <div class="text-base font-black text-white leading-tight" id="user-name">Dragon Rider</div>
-        </div>
-      </div>
-      <!-- Header coin badge -->
-      <div class="coin-badge flex items-center gap-1.5 rounded-full px-3 py-1.5">
-        <span class="text-yellow-400 text-sm">🪙</span>
-        <span class="text-white text-sm font-bold tabular-nums" id="header-bal">0</span>
-      </div>
-    </div>
-
-    <!-- Balance Card -->
-    <div class="px-4 pt-3">
-      <div class="balance-card rounded-3xl p-5 relative overflow-hidden">
-        <!-- BG dragon watermark -->
-        <div class="absolute -right-6 -top-4 text-[100px] opacity-[.07] dragon-float select-none pointer-events-none">🐉</div>
-
-        <div class="relative z-10">
-          <div class="network-chip mb-4">
-            <span class="w-2 h-2 rounded-full bg-[#7ee787]"></span>
-            AdsGram + Monetag mode
-          </div>
-          <div class="text-[10px] uppercase tracking-widest text-[#c8c3ff] mb-0.5 font-bold">Total Balance</div>
-          <div class="flex items-end gap-2 mb-4">
-            <span class="text-6xl font-black text-white tabular-nums" id="main-bal">0</span>
-            <span class="text-[#f0c040] font-black text-base mb-2">COINS</span>
-          </div>
-
-          <div class="grid grid-cols-2 gap-2.5 mb-4">
-            <div class="balance-metric">
-              <div class="text-[10px] text-[#aaaaaa] uppercase tracking-wider">Reward</div>
-              <div class="text-white font-black">+<span id="card-reward-amt">10</span> coins</div>
-            </div>
-            <div class="balance-metric">
-              <div class="text-[10px] text-[#aaaaaa] uppercase tracking-wider">Ad Flow</div>
-              <div class="text-white font-black">2 networks</div>
-            </div>
-          </div>
-
-          <!-- Daily progress -->
-          <div>
-            <div class="flex justify-between text-[10px] mb-1.5 text-[#aaaaaa]">
-              <span>Daily Progress</span>
-              <span class="text-[#8774e1] font-semibold">
-                <span id="ads-today">0</span> / <span id="ads-max">20</span> ads
-              </span>
-            </div>
-            <div class="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-              <div class="prog-fill h-full rounded-full" id="daily-prog" style="width:0%"></div>
-            </div>
-          </div>
-
-          <div class="text-[11px] text-[#d7d2ff] mt-3" id="streak-text">
-            🔥 Watch your first ad to start a streak!
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Watch Ad Button -->
-    <div class="px-4 pt-3">
-      <button id="watch-btn" onclick="watchAd()"
-              class="watch-btn w-full py-5 rounded-2xl text-white font-bold shadow-xl flex items-center justify-center gap-3"
-              style="min-height:74px;">
-        <span id="watch-icon" class="text-2xl select-none">▶️</span>
-        <div class="text-left relative z-10">
-          <div id="watch-title" class="text-[1.05rem] font-bold">Watch Ad &amp; Earn</div>
-          <div id="watch-sub"   class="text-xs font-normal opacity-75">
-            AdsGram + Monetag, reward once
-          </div>
-        </div>
-      </button>
-    </div>
-
-    <!-- Stats Grid -->
-    <div class="px-4 pt-4">
-      <div class="section-title"><span>Your Stats</span><span>Today</span></div>
-      <div class="grid grid-cols-3 gap-2.5">
-        <div class="stat-card rounded-2xl p-3 text-center">
-          <div class="stat-icon text-xl">📺</div>
-          <div class="text-xl font-black text-white tabular-nums" id="s-today">0</div>
-          <div class="text-[10px] text-[#aaaaaa] mt-0.5">Today</div>
-        </div>
-        <div class="stat-card rounded-2xl p-3 text-center">
-          <div class="stat-icon text-xl">💎</div>
-          <div class="text-xl font-black text-white tabular-nums" id="s-total">0</div>
-          <div class="text-[10px] text-[#aaaaaa] mt-0.5">All-time Ads</div>
-        </div>
-        <div class="stat-card rounded-2xl p-3 text-center">
-          <div class="stat-icon text-xl">🔥</div>
-          <div class="text-xl font-black text-white tabular-nums" id="s-streak">0</div>
-          <div class="text-[10px] text-[#aaaaaa] mt-0.5">Day Streak</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Recent Earnings -->
-    <div class="px-4 pt-4 pb-2">
-      <div class="section-title"><span>Recent Earnings</span><span>Latest 10</span></div>
-      <div id="activity-list">
-        <div class="empty-card text-center py-8 text-[#aaaaaa]">
-          <div class="text-4xl mb-2">📭</div>
-          <div class="text-sm">No earnings yet — watch an ad to start!</div>
-        </div>
-      </div>
-    </div>
-
-  </div><!-- /page-home -->
-
-
-  <!-- ╔══════════════════════════════════╗ -->
-  <!-- ║          TASKS PAGE              ║ -->
-  <!-- ╚══════════════════════════════════╝ -->
-  <div id="page-tasks" class="page">
-    <div class="lock-bg min-h-screen flex flex-col items-center justify-center px-6 py-12">
-
-      <div class="dragon-float text-7xl mb-5 select-none">🔒</div>
-      <div class="text-2xl font-black text-white mb-2 text-center">Tasks Feature</div>
-      <div class="text-sm text-[#aaaaaa] text-center mb-7 leading-relaxed max-w-xs">
-        Complete daily &amp; special tasks to earn bonus coins, unlock achievements,
-        and climb the leaderboard.
-      </div>
-
-      <div class="w-full max-w-sm space-y-2.5 mb-8">
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">📋</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Daily Tasks</div>
-            <div class="text-[#aaaaaa] text-xs">Fresh missions every 24 hours</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">🏆</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Achievements</div>
-            <div class="text-[#aaaaaa] text-xs">Unlock special coin bonuses</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">🎯</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Special Missions</div>
-            <div class="text-[#aaaaaa] text-xs">High-reward limited-time tasks</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">📊</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Leaderboard</div>
-            <div class="text-[#aaaaaa] text-xs">Compete with other players</div>
-          </div>
-        </div>
-      </div>
-
-      <a id="tasks-cta" href="#" target="_blank" class="w-full max-w-sm block">
-        <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8774e1] to-[#6c5ce7] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-          🐉&nbsp; Get Full Version
-        </button>
-      </a>
-      <p class="text-[#aaaaaa] text-xs mt-3 text-center">Contact us on Telegram to unlock all features</p>
-
-    </div>
-  </div><!-- /page-tasks -->
-
-
-  <!-- ╔══════════════════════════════════╗ -->
-  <!-- ║          REFER PAGE              ║ -->
-  <!-- ╚══════════════════════════════════╝ -->
-  <div id="page-refer" class="page">
-    <div class="lock-bg min-h-screen flex flex-col items-center justify-center px-6 py-12">
-
-      <div class="dragon-float text-7xl mb-5 select-none">🔒</div>
-      <div class="text-2xl font-black text-white mb-2 text-center">Referral System</div>
-      <div class="text-sm text-[#aaaaaa] text-center mb-7 leading-relaxed max-w-xs">
-        Invite friends and earn a percentage of their ad revenue forever.
-        Build your Dragon Army!
-      </div>
-
-      <div class="w-full max-w-sm space-y-2.5 mb-8">
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">👥</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Multi-level Referrals</div>
-            <div class="text-[#aaaaaa] text-xs">Earn from 3 levels deep</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">🔗</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Unique Invite Link</div>
-            <div class="text-[#aaaaaa] text-xs">Share and track every referral</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">💰</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Passive Income</div>
-            <div class="text-[#aaaaaa] text-xs">Earn while your friends watch ads</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">🎁</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Referral Bonuses</div>
-            <div class="text-[#aaaaaa] text-xs">Bonus coins for each new sign-up</div>
-          </div>
-        </div>
-      </div>
-
-      <a id="refer-cta" href="#" target="_blank" class="w-full max-w-sm block">
-        <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8774e1] to-[#6c5ce7] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-          🐉&nbsp; Get Full Version
-        </button>
-      </a>
-      <p class="text-[#aaaaaa] text-xs mt-3 text-center">Contact us on Telegram to unlock all features</p>
-
-    </div>
-  </div><!-- /page-refer -->
-
-
-  <!-- ╔══════════════════════════════════╗ -->
-  <!-- ║          WALLET PAGE             ║ -->
-  <!-- ╚══════════════════════════════════╝ -->
-  <div id="page-wallet" class="page">
-    <div class="lock-bg min-h-screen flex flex-col items-center justify-center px-6 py-12">
-
-      <div class="dragon-float text-7xl mb-5 select-none">🔒</div>
-      <div class="text-2xl font-black text-white mb-2 text-center">Wallet &amp; Withdraw</div>
-      <div class="text-sm text-[#aaaaaa] text-center mb-7 leading-relaxed max-w-xs">
-        Connect your crypto wallet and withdraw your coins to real tokens
-        on the TON blockchain.
-      </div>
-
-      <div class="w-full max-w-sm space-y-2.5 mb-8">
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">💎</span>
-          <div>
-            <div class="text-white text-sm font-semibold">TON Withdrawals</div>
-            <div class="text-[#aaaaaa] text-xs">Withdraw directly to your TON wallet</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">💵</span>
-          <div>
-            <div class="text-white text-sm font-semibold">USDT Support</div>
-            <div class="text-[#aaaaaa] text-xs">Stable coin withdrawal option</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">📊</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Transaction History</div>
-            <div class="text-[#aaaaaa] text-xs">Track every withdrawal clearly</div>
-          </div>
-        </div>
-        <div class="feat-row flex items-center gap-3 rounded-2xl p-3.5">
-          <span class="text-xl">🔐</span>
-          <div>
-            <div class="text-white text-sm font-semibold">Secure Payouts</div>
-            <div class="text-[#aaaaaa] text-xs">2FA and on-chain verification</div>
-          </div>
-        </div>
-      </div>
-
-      <a id="wallet-cta" href="#" target="_blank" class="w-full max-w-sm block">
-        <button class="w-full py-4 rounded-2xl bg-gradient-to-r from-[#8774e1] to-[#6c5ce7] text-white font-bold text-base flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-transform">
-          🐉&nbsp; Get Full Version
-        </button>
-      </a>
-      <p class="text-[#aaaaaa] text-xs mt-3 text-center">Contact us on Telegram to unlock all features</p>
-
-    </div>
-  </div><!-- /page-wallet -->
-
-
-  <!-- ════════════════ BOTTOM NAV ════════════════ -->
-  <nav class="bottom-nav">
-    <div class="flex items-center justify-around py-2 px-2">
-
-      <button class="nav-btn active flex flex-col items-center px-5 py-1.5 rounded-xl"
-              onclick="switchPage('home',this)">
-        <span class="ni">🏠</span>
-        <span class="nl">Home</span>
-      </button>
-
-      <button class="nav-btn flex flex-col items-center px-5 py-1.5 rounded-xl"
-              onclick="switchPage('tasks',this)">
-        <span class="ni">✅</span>
-        <span class="nl">Tasks</span>
-      </button>
-
-      <button class="nav-btn flex flex-col items-center px-5 py-1.5 rounded-xl"
-              onclick="switchPage('refer',this)">
-        <span class="ni">👥</span>
-        <span class="nl">Refer</span>
-      </button>
-
-      <button class="nav-btn flex flex-col items-center px-5 py-1.5 rounded-xl"
-              onclick="switchPage('wallet',this)">
-        <span class="ni">💰</span>
-        <span class="nl">Wallet</span>
-      </button>
-
-    </div>
-  </nav>
-
-</div><!-- /app -->
-
-
-<!-- ════════════════════════════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
-
-/* ── Telegram WebApp ──────────────────────────────────────── */
 const tg = window.Telegram?.WebApp ?? null;
-if (tg) {
-  tg.ready();
-  tg.expand();
-  try { tg.setHeaderColor('#0f0f0f'); }     catch(_) {}
-  try { tg.setBackgroundColor('#0f0f0f'); } catch(_) {}
-}
+let state = JSON.parse(localStorage.getItem('defidragon_v1')) || { balance: 0, adsToday: 0 };
 
-/* ── State ────────────────────────────────────────────────── */
-const STORE = 'defidragon_v1';
-
-function defaultState() {
-  return {
-    balance:       0,
-    totalAds:      0,
-    adsToday:      0,
-    lastDay:       null,
-    streak:        0,
-    earnings:      [],
-  };
-}
-
-function loadState() {
-  try {
-    const raw = localStorage.getItem(STORE);
-    if (raw) return { ...defaultState(), ...JSON.parse(raw) };
-  } catch(_) {}
-  return defaultState();
-}
-
-function saveState() {
-  try { localStorage.setItem(STORE, JSON.stringify(state)); } catch(_) {}
-}
-
-let state = loadState();
-
-/* ── Daily reset & streak ─────────────────────────────────── */
-function checkDay() {
-  const today = new Date().toDateString();
-  if (state.lastDay === today) return;
-
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-
-  if (state.lastDay === yesterday.toDateString()) {
-    state.streak += 1;            // continued streak
-  } else if (state.lastDay !== null) {
-    state.streak = 0;             // broken streak
-  }
-  state.adsToday = 0;
-  state.lastDay  = today;
-  saveState();
-}
-
-/* ── UI update ───────────────────────────────────────────── */
 function updateUI() {
-  const bal = state.balance.toLocaleString();
-  document.getElementById('main-bal').textContent    = bal;
-  document.getElementById('header-bal').textContent  = bal;
-  document.getElementById('s-today').textContent     = state.adsToday;
-  document.getElementById('s-total').textContent     = state.totalAds;
-  document.getElementById('s-streak').textContent    = state.streak;
-  document.getElementById('ads-today').textContent   = state.adsToday;
-  const rewardAmtEl = document.getElementById('reward-amt');
-  if (rewardAmtEl) rewardAmtEl.textContent = CONFIG.rewardPerAd;
-  document.getElementById('card-reward-amt').textContent = CONFIG.rewardPerAd;
-
-  const max = CONFIG.maxAdsPerDay || 20;
-  document.getElementById('ads-max').textContent = max;
-
-  const pct = Math.min((state.adsToday / max) * 100, 100);
-  document.getElementById('daily-prog').style.width = pct + '%';
-
-  const streakEl = document.getElementById('streak-text');
-  streakEl.textContent = state.streak > 0
-    ? `🔥 ${state.streak}-day streak! Keep it up!`
-    : 'Watch an ad every day to build your streak!';
-
-  // Watch button
-  const btn        = document.getElementById('watch-btn');
-  const limited    = CONFIG.maxAdsPerDay > 0 && state.adsToday >= CONFIG.maxAdsPerDay;
-  btn.disabled     = limited;
-
-  if (limited) {
-    document.getElementById('watch-icon').textContent  = '✅';
-    document.getElementById('watch-title').textContent = 'Daily Limit Reached';
-    document.getElementById('watch-sub').textContent   = 'Come back tomorrow!';
-  } else {
-    document.getElementById('watch-icon').textContent  = '▶️';
-    document.getElementById('watch-title').textContent = 'Watch Ad & Earn';
-    document.getElementById('watch-sub').innerHTML     =
-      `AdsGram + Monetag, reward once`;
-  }
-
-  renderActivity();
+  document.getElementById('main-bal').textContent = state.balance;
+  document.getElementById('watch-btn').disabled = (state.adsToday >= CONFIG.maxAdsPerDay);
 }
 
-/* ── Activity list ───────────────────────────────────────── */
-function renderActivity() {
-  const el = document.getElementById('activity-list');
-  if (!state.earnings.length) {
-    el.innerHTML = `
-      <div class="empty-card text-center py-8 text-[#aaaaaa]">
-        <div class="text-4xl mb-2">📭</div>
-        <div class="text-sm">No earnings yet — watch an ad to start!</div>
-      </div>`;
-    return;
-  }
-  const items = [...state.earnings].reverse().slice(0, 10);
-  el.innerHTML = items.map(e => `
-    <div class="activity-row fade-up flex items-center justify-between rounded-2xl p-3 mb-2">
-      <div class="flex items-center gap-3">
-        <div class="w-9 h-9 rounded-2xl bg-[rgba(135,116,225,.20)] flex items-center justify-center text-sm">📺</div>
-        <div>
-          <div class="text-white text-sm font-medium">Ad Watched</div>
-          <div class="text-[#aaaaaa] text-xs">${e.time}</div>
-        </div>
-      </div>
-      <div class="text-yellow-400 font-black text-sm">+${e.amount}&nbsp;🪙</div>
-    </div>`).join('');
-}
-
-/* ── Toast ───────────────────────────────────────────────── */
-let toastTimer = null;
-function toast(msg, type = 'info') {
-  const el  = document.getElementById('toast');
-  const map = {
-    success: 'background:#1a3a1a; color:#4caf50; border:1px solid #4caf5055;',
-    error:   'background:#3a1a1a; color:#e53935; border:1px solid #e5393555;',
-    warning: 'background:#3a2e0a; color:#f0c040; border:1px solid #f0c04055;',
-    info:    'background:#1e1e2e; color:#fff;    border:1px solid rgba(135,116,225,.35);',
-  };
-  el.setAttribute('style', (map[type] || map.info) + 'position:fixed;top:16px;left:50%;z-index:9999;max-width:300px;width:90%;border-radius:14px;padding:10px 20px;font-size:.875rem;font-weight:600;text-align:center;pointer-events:none;transform:translateX(-50%);');
+function toast(msg) {
+  const el = document.getElementById('toast');
   el.textContent = msg;
-  el.className   = 'show';
-
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => { el.className = ''; }, 3200);
+  el.style.display = 'block';
+  setTimeout(() => el.style.display = 'none', 3000);
 }
-
-/* ── Coin particle animation ─────────────────────────────── */
-function spawnCoin(btn) {
-  const rect = btn.getBoundingClientRect();
-  const p    = document.createElement('div');
-  p.className   = 'coin-particle';
-  p.textContent = '🪙';
-  p.style.left  = rect.left + rect.width  / 2 + 'px';
-  p.style.top   = rect.top  + rect.height / 2 + 'px';
-  document.body.appendChild(p);
-  setTimeout(() => p.remove(), 900);
-}
-
-/* ── Give reward ─────────────────────────────────────────── */
-function giveReward(btn) {
-  const amt = CONFIG.rewardPerAd;
-  state.balance   += amt;
-  state.totalAds  += 1;
-  state.adsToday  += 1;
-
-  const now = new Date();
-  state.earnings.push({
-    amount: amt,
-    time: now.toLocaleTimeString([], { hour:'2-digit', minute:'2-digit' })
-        + '  ' + now.toLocaleDateString(),
-    ts: now.getTime(),
-  });
-  if (state.earnings.length > 50) state.earnings = state.earnings.slice(-50);
-
-  saveState();
-  updateUI();
-
-  // Visual feedback
-  if (btn) spawnCoin(btn);
-  const balEl = document.getElementById('main-bal');
-  balEl.classList.remove('pop-bounce');
-  void balEl.offsetWidth;
-  balEl.classList.add('pop-bounce');
-
-  toast(`🎉 +${amt} coins earned!`, 'success');
-
-  if (tg?.HapticFeedback) {
-    try { tg.HapticFeedback.notificationOccurred('success'); } catch(_) {}
-  }
-}
-
-/* ── Ad watching ─────────────────────────────────────────── */
-let adBusy = false;
 
 async function watchAd() {
-  if (adBusy) return;
-  if (CONFIG.maxAdsPerDay > 0 && state.adsToday >= CONFIG.maxAdsPerDay) {
-    toast('Daily limit reached. Come back tomorrow! 🌙', 'warning');
-    return;
-  }
-
-  adBusy = true;
   const btn = document.getElementById('watch-btn');
   btn.disabled = true;
-  document.getElementById('watch-icon').className  = 'text-2xl spin-anim select-none';
-  document.getElementById('watch-icon').textContent = '⚙️';
-  document.getElementById('watch-title').textContent = 'Loading Ad…';
-  document.getElementById('watch-sub').textContent   = 'Please wait';
+  btn.textContent = 'Loading...';
 
-  try {
-    let rewarded = false;
-    if      (CONFIG.adNetwork === 'adsgram')  rewarded = await runAdsgram();
-    else if (CONFIG.adNetwork === 'monetag')  rewarded = await runMonetag();
-    else if (CONFIG.adNetwork === 'both')     rewarded = await runBothAdNetworks();
-    else throw new Error(`Unsupported ad network: ${CONFIG.adNetwork}`);
-
-    if (rewarded) giveReward(btn);
-  } catch(e) {
-    console.error('[DefiDragon] Ad error:', e);
-    toast('Ad failed to load. Try again later.', 'error');
-  }
-
-  adBusy = false;
-  updateUI();
-}
-
-/* ── AdsGram ─────────────────────────────────────────────── */
-async function runAdsgram() {
-  if (CONFIG.adsgramBlockId === 'YOUR_ADSGRAM_BLOCK_ID') {
-    toast('⚠️ Set your AdsGram Block ID in CONFIG', 'warning');
-    return false;
-  }
-  if (typeof window.Adsgram === 'undefined') {
-    toast('AdsGram SDK unavailable. Try again later.', 'error');
-    return false;
-  }
-  return new Promise((resolve) => {
-    window.Adsgram.init({ blockId: String(CONFIG.adsgramBlockId) })
-      .then(ctrl => {
-        ctrl.addEventListener('onReward', () => resolve(true));
-        ctrl.addEventListener('onSkip',   () => { toast('⚠️ Watch the full ad to earn!', 'warning'); resolve(false); });
-        ctrl.addEventListener('onError',  (e) => {
-          console.error('[AdsGram]', e);
-          toast('Ad not available right now.', 'error');
-          resolve(false);
-        });
-        return ctrl.show();
-      })
-      .catch(e => {
-        console.error('[AdsGram init]', e);
-        toast('AdsGram failed. Try again.', 'error');
-        resolve(false);
-      });
+  const controller = await window.Adsgram.init({ blockId: CONFIG.adsgramBlockId });
+  controller.show().then(() => {
+    state.balance += CONFIG.rewardPerAd;
+    state.adsToday += 1;
+    localStorage.setItem('defidragon_v1', JSON.stringify(state));
+    updateUI();
+    toast('Reward added!');
+    btn.textContent = 'Watch Ad & Earn';
+    btn.disabled = false;
+  }).catch(() => {
+    toast('Ad failed.');
+    btn.textContent = 'Watch Ad & Earn';
+    btn.disabled = false;
   });
 }
 
-/* ── Monetag ─────────────────────────────────────────────── */
-async function runMonetag() {
-  if (CONFIG.monetagShowFn === 'show_YOUR_SHOW_FN') {
-    toast('⚠️ Set your Monetag show function in CONFIG', 'warning');
-    return false;
-  }
-  const showFn = window[CONFIG.monetagShowFn];
-  if (typeof showFn !== 'function') {
-    toast('Monetag script not loaded. Check README.', 'error');
-    return false;
-  }
-  try {
-    await showFn();
-    return true;
-  } catch(_) {
-    toast('Monetag ad not available.', 'error');
-    return false;
-  }
-}
-
-/* Both ad networks */
-async function runBothAdNetworks() {
-  document.getElementById('watch-title').textContent = 'Loading AdsGram Ad...';
-  const adsgramCompleted = await runAdsgram();
-  if (!adsgramCompleted) return false;
-
-  document.getElementById('watch-title').textContent = 'Loading Monetag Ad...';
-  const monetagCompleted = await runMonetag();
-  if (!monetagCompleted) return false;
-
-  return true;
-}
-
-/* Page navigation */
-function switchPage(name, navEl) {
+function switchPage(name, el) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.getElementById('page-' + name).classList.add('active');
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-  navEl.classList.add('active');
-  window.scrollTo({ top: 0, behavior: 'instant' });
-  if (tg?.HapticFeedback) {
-    try { tg.HapticFeedback.selectionChanged(); } catch(_) {}
-  }
 }
 
-/* ── Bootstrap ───────────────────────────────────────────── */
-function boot() {
-  // Animated loading bar
-  let pct = 0;
-  const bar = document.getElementById('load-bar');
-  const iv  = setInterval(() => {
-    pct += Math.random() * 28;
-    if (pct >= 100) {
-      pct = 100;
-      clearInterval(iv);
-      setTimeout(() => {
-        document.getElementById('loading').style.display = 'none';
-        document.getElementById('app').classList.remove('hidden');
-      }, 300);
-    }
-    bar.style.width = pct + '%';
-  }, 120);
-
-  // Set CTA links
-  ['tasks-cta','refer-cta','wallet-cta'].forEach(id => {
-    const a = document.getElementById(id);
-    if (a) a.href = CONFIG.telegramContact;
-  });
-
-  // Telegram user info
-  const user = tg?.initDataUnsafe?.user;
-  if (user) {
-    const full = user.first_name + (user.last_name ? ' ' + user.last_name : '');
-    document.getElementById('user-name').textContent = full;
-    const av = document.getElementById('user-avatar');
-    if (user.photo_url) {
-      av.innerHTML = `<img src="${user.photo_url}" class="w-full h-full object-cover rounded-full" alt="">`;
-    } else {
-      av.textContent = full.charAt(0).toUpperCase();
-    }
-  }
-
-  checkDay();
-  updateUI();
-}
-
-window.addEventListener('DOMContentLoaded', boot);
+updateUI();
 </script>
 </body>
 </html>
