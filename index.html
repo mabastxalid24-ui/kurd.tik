@@ -6,6 +6,9 @@
   
   <meta name="adsbitvex-verify" content="DVFjwarVRYVrNCekL7PvxdHW">
   
+  <!-- زیادکردنی سکرێپتی Adsbitvex -->
+  <script src="https://sdk.adsbitvex.com/functions/v1/ad-script?appid=000209"></script>
+  
   <title>CoinZilla</title>
   
   <script src="https://cdn.tailwindcss.com"></script>
@@ -33,7 +36,7 @@
     body { background: var(--bg); color: var(--text); font-family: sans-serif; max-width: 480px; margin: 0 auto; min-height: 100vh; padding-bottom: 100px; }
     .balance-card { background: linear-gradient(135deg, #1a1030 0%, #2d1f5e 100%); border: 1px solid rgba(135,116,225,.35); }
     .watch-btn { background: linear-gradient(135deg, #f0c040 0%, #8774e1 100%); }
-    .secondary-btn { background: #444; border: 1px solid #666; } /* ستایلی دوگمەی دووەم */
+    .secondary-btn { background: linear-gradient(135deg, #444 0%, #222 100%); border: 1px solid #666; }
     .watch-btn:disabled { background: #333; opacity:.7; }
     .page { display:none; }
     .page.active { display:block; }
@@ -53,23 +56,16 @@
       </div>
     </div>
 
-    <!-- دوگمەی یەکەم -->
     <div class="px-4 pt-4">
       <button id="watch-btn" onclick="watchAd()" class="watch-btn w-full py-5 rounded-2xl font-bold">
-        Watch Ad & Earn
+        Watch Ad & Earn (Adsgram)
       </button>
     </div>
 
-    <!-- دوگمەی دووەم (تازە) -->
     <div class="px-4 pt-4">
       <button id="secondary-btn" onclick="handleSecondaryAd()" class="secondary-btn w-full py-4 rounded-2xl font-bold">
-        Watch Banner Ad
+        Watch 15s Ad (Adsbitvex)
       </button>
-    </div>
-
-    <div class="px-4 pt-4 flex justify-center">
-      <div data-abx-banner="e267f46dca64" data-abx-w="320" data-abx-h="50" style="display:inline-block;width:320px;height:50px;line-height:0"></div>
-      <script async src="https://sdk.adsbitvex.com/functions/v1/banner-serve?action=sdk"></script>
     </div>
   </div>
 
@@ -106,18 +102,33 @@ async function watchAd() {
     localStorage.setItem('defidragon_v1', JSON.stringify(state));
     updateUI();
     toast('Reward added!');
-    btn.textContent = 'Watch Ad & Earn';
+    btn.textContent = 'Watch Ad & Earn (Adsgram)';
     btn.disabled = false;
   }).catch(() => {
     toast('Ad failed.');
-    btn.textContent = 'Watch Ad & Earn';
+    btn.textContent = 'Watch Ad & Earn (Adsgram)';
     btn.disabled = false;
   });
 }
 
-function handleSecondaryAd() {
-    toast('هێشتا کار ناکات - پەیوەندی بە سیستەمی Adsbitvex دەکات');
-    // لێرە دەتوانیت کۆدی تایبەت بە Adsbitvex دانێیت ئەگەر دەتەوێت دوگمەکە فەنکشنێکی تایبەتی هەبێت
+// فەنکشنی نوێ بۆ Adsbitvex
+async function handleSecondaryAd() {
+    const btn = document.getElementById('secondary-btn');
+    btn.disabled = true;
+    btn.textContent = 'Loading...';
+    
+    try {
+        await window.showadsbitvex();
+        state.balance += CONFIG.rewardPerAd;
+        localStorage.setItem('defidragon_v1', JSON.stringify(state));
+        updateUI();
+        toast('Reward earned!');
+    } catch (e) {
+        toast('Ad failed.');
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Watch 15s Ad (Adsbitvex)';
+    }
 }
 
 function switchPage(name, el) {
