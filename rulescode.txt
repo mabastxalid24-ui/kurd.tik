@@ -1,0 +1,42 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // --- Helper Function: Check if user is Admin ---
+    function isAdmin(appId) {
+      return exists(/databases/$(database)/documents/artifacts/$(appId)/admins/$(request.auth.uid));
+    }
+
+    // 1. User Profiles (User apna data dekh/edit kar sakta hai)
+    match /artifacts/{appId}/users/{userId}/profile/main {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    
+    // 2. Games (Sab dekh sakte hain, par sirf Admin add/delete karega)
+    match /artifacts/{appId}/public/data/games/{gameId} {
+      allow read: if true;
+      allow write: if request.auth != null && isAdmin(appId);
+    }
+
+    // 3. Global Settings (Sab dekh sakte hain, sirf Admin edit karega)
+    match /artifacts/{appId}/public/data/settings/global {
+      allow read: if true;
+      allow write: if request.auth != null && isAdmin(appId);
+    }
+
+    // 4. Withdrawals (Users request bana sakte hain, Admin status update kar sakta hai)
+    match /artifacts/{appId}/public/data/withdrawals/{docId} {
+      // User create kar sakta hai
+      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
+      // Read sab logged-in users kar sakte hain (Client side filter ke liye)
+      allow read: if request.auth != null;
+      // Update sirf Admin kar sakta hai (Status change: Paid/Rejected)
+      allow update: if request.auth != null && isAdmin(appId);
+    }
+
+    // 5. Admin Verification (Login ke waqt check karne ke liye)
+    match /artifacts/{appId}/admins/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+    }
+  }
+}
