@@ -3,115 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GameToZone - Play & Earn</title>
+    <title>GameToZone</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
-    <!-- Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
-    
-    <!-- Telegram Web App SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
-    <!-- REAL ADS SCRIPT -->
-    <script src="https://ad.gigapub.tech/script?id=3177"></script>
-
-    <style>
-        body { font-family: 'Poppins', sans-serif; background-color: #0f172a; color: #fff; user-select: none; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-track { background: #1e293b; }
-        ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 5px; }
-        .pulse-gold-btn { animation: pulse-gold 2s infinite; }
-        @keyframes pulse-gold { 0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); } 100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); } }
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 2000; background: #1e293b; border-left: 4px solid #6366f1; padding: 15px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); display: flex; align-items: center; opacity: 0; transition: opacity 0.3s; }
-        .toast.show { opacity: 1; }
-        .nav-item.active { color: #6366f1; }
-        .game-frame { width: 100%; height: 100%; border: none; }
-        .disabled-card { opacity: 0.5; pointer-events: none; filter: grayscale(1); }
-    </style>
 </head>
-<body class="h-screen flex flex-col relative">
+<body class="bg-slate-900 text-white h-screen flex flex-col items-center justify-center">
 
-    <div id="toast-container"></div>
-
-    <!-- Auth -->
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900 flex flex-col items-center justify-center p-6">
-        <div class="w-24 h-24 bg-indigo-600 rounded-full flex items-center justify-center mb-6 shadow-lg shadow-indigo-500/50">
-            <i class="fas fa-gamepad text-4xl text-white"></i>
-        </div>
-        <h1 class="text-3xl font-bold mb-2 text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 to-cyan-400">GameToZone</h1>
-        <p class="text-slate-400 mb-8 text-center">Play, Watch & Earn Real Cash!</p>
-        <button onclick="initAuth()" class="w-full max-w-xs bg-indigo-600 hover:bg-indigo-700 py-3 rounded-xl font-bold text-lg shadow-lg">Start Earning</button>
-        <p class="text-xs text-slate-500 mt-4">Connecting...</p>
+    <div id="auth-screen" class="text-center">
+        <h1 class="text-2xl font-bold mb-4">Loading GameToZone...</h1>
     </div>
 
-    <!-- Main App (پێشتر هەیە وەک خۆی بەجێی بێڵە) -->
-    <div id="main-app" class="hidden flex-1 flex flex-col overflow-hidden pb-16">
-        <!-- ... (داتاکانی ناو Main App-ەکەت وەک خۆی بمێنێتەوە) ... -->
+    <div id="main-app" class="hidden w-full h-full p-4">
+        <h1 class="text-xl">Welcome, <span id="username"></span></h1>
     </div>
 
     <script>
-        // 1. پێناسەکردنی appId
         const appId = "topkurd-2799c";
-
         const firebaseConfig = {
             apiKey: "AIzaSyDt2kWrpOg3YcYb2v1p7RIohALvQ6iBap8",
             authDomain: "topkurd-2799c.firebaseapp.com",
             projectId: "topkurd-2799c",
             storageBucket: "topkurd-2799c.firebasestorage.app",
             messagingSenderId: "999271629770",
-            appId: "1:999271629770:web:e92f9305589c512eed8533",
-            measurementId: "G-C1X34QJLR5"
+            appId: "1:999271629770:web:e92f9305589c512eed8533"
         };
         
         firebase.initializeApp(firebaseConfig);
         const auth = firebase.auth();
         const db = firebase.firestore();
-        
-        // 2. چالاککردنی تێلێگرام
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        let currentUser = null, userData = null, gameTimerInterval = null, secondsPlayed = 0;
-        let lastAdWatchTime = 0;
-
-        let SETTINGS = { gameDuration: 60, gameReward: 50, referBonus: 500, watchAdReward: 50, watchAdDelay: 15, coinValue: "₹1", socials: {}, paymentMethods: ['Paytm','UPI'] };
-
-        async function initAuth() { 
-            try { 
-                await auth.signInAnonymously(); 
-            } catch(e) { 
-                console.error(e);
-            } 
-        }
-
-        auth.onAuthStateChanged(async (u) => {
-            if (u) {
-                currentUser = u;
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                await loadSettings();
-                loadProfile(u.uid);
-            }
-        });
-
-        // ... (باقی فانکشنەکانی تر وەک خۆیان بنووسەرەوە) ...
-        
-        async function loadSettings() {
-            try {
-                const doc = await db.collection(`artifacts/${appId}/public/data/settings`).doc('global').get();
-                if(doc.exists) {
-                    const d = doc.data();
-                    if(d.gameDuration) SETTINGS.gameDuration=d.gameDuration;
-                    // ... (باقی کۆدەکانی Settings)
+        // لێرەدا ڕاستەوخۆ IDـی تێلێگرام وەردەگرین
+        async function startApp() {
+            const user = tg.initDataUnsafe.user;
+            
+            if (user) {
+                // بەکارهێنانی IDـی تێلێگرام بۆ Auth
+                try {
+                    // لێرەدا دەتوانیت Custom Token بەکاربهێنیت یان تەنها IDـکە وەک UID بەکاربهێنیت
+                    console.log("Telegram User ID:", user.id);
+                    document.getElementById('username').innerText = user.first_name;
+                    
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                } catch (e) {
+                    alert("Error: " + e.message);
                 }
-            } catch(e) { console.log("Settings error"); }
+            } else {
+                document.getElementById('auth-screen').innerHTML = "<h1 class='text-red-500'>تکایە تەنها لەناو تێلێگرامەوە بیکەرەوە!</h1>";
+            }
         }
-        
-        // ... تەواوی فانکشنەکانی تریش لەمەودوا دانێ
+
+        startApp();
     </script>
 </body>
 </html>
