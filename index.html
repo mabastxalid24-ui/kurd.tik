@@ -23,7 +23,7 @@
         <!-- Header -->
         <div class="bg-gradient-to-r from-amber-700 to-amber-900 p-5 rounded-2xl text-white mb-4">
             <p class="text-xs opacity-80">TOTAL BALANCE</p>
-            <h2 class="text-3xl font-bold">$3.95</h2>
+            <h2 id="balance-display" class="text-3xl font-bold">$0.00</h2>
             <p class="text-xs mt-2">Welcome, <span id="username"></span></p>
         </div>
 
@@ -43,6 +43,17 @@
     </nav>
 
     <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyDt2kWrpOg3YcYb2v1p7RIohALvQ6iBap8",
+            authDomain: "topkurd-2799c.firebaseapp.com",
+            projectId: "topkurd-2799c",
+            storageBucket: "topkurd-2799c.firebasestorage.app",
+            messagingSenderId: "999271629770",
+            appId: "1:999271629770:web:e92f9305589c512eed8533"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
         tg.ready();
 
@@ -51,10 +62,28 @@
             document.getElementById('page-' + id).classList.remove('hidden');
         }
 
+        async function loadUserData(user) {
+            const userRef = db.collection('users').doc(String(user.id));
+            const doc = await userRef.get();
+
+            if (!doc.exists) {
+                await userRef.set({
+                    balance: 0,
+                    username: user.first_name,
+                    joinedAt: new Date()
+                });
+                document.getElementById('balance-display').innerText = "$0.00";
+            } else {
+                const data = doc.data();
+                document.getElementById('balance-display').innerText = "$" + (data.balance || 0).toFixed(2);
+            }
+        }
+
         async function startApp() {
             const user = tg.initDataUnsafe.user;
             if (user) {
                 document.getElementById('username').innerText = user.first_name;
+                await loadUserData(user);
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
             } else {
