@@ -1,0 +1,135 @@
+<script>
+    // Configuration - ڕاستکراوە بۆ topkurd-2799c
+    const firebaseConfig = {
+        apiKey: "AIzaSyDt2kWrpOg3YcYb2v1p7RIohALvQ6iBap8",
+        authDomain: "topkurd-2799c.firebaseapp.com",
+        projectId: "topkurd-2799c",
+        storageBucket: "topkurd-2799c.firebasestorage.app",
+        messagingSenderId: "999271629770",
+        appId: "1:999271629770:web:e92f9305589c512eed8533"
+    };
+    
+    // ئەمە زۆر گرنگە: ناوی کۆلێکشنەکەتە لە Firestore
+    const appId = "topkurd-2799c";
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Authentication Listener
+    auth.onAuthStateChanged(user => { if(user) verifyAdmin(user); else showLogin(); });
+
+    // Login Function
+    async function handleLogin(e) {
+        e.preventDefault();
+        document.getElementById('login-btn').innerText = 'Verifying...';
+        try { await auth.signInWithEmailAndPassword(document.getElementById('adm-email').value, document.getElementById('adm-pass').value); }
+        catch(e) { showToast(e.message, 'error'); document.getElementById('login-btn').innerText='Login'; }
+    }
+
+    // Verify Admin Role
+    async function verifyAdmin(user) {
+        try {
+            // ئەم ڕێگایە دڵنیادەبێتەوە کە ئایا تۆ ئەدمینیت یان نا
+            const doc = await db.collection(`artifacts/${appId}/admins`).doc(user.uid).get();
+            if(doc.exists && doc.data().role === 'admin') { showDashboard(); initData(); showToast("Welcome Admin", "success"); }
+            else throw new Error("Not Admin");
+        } catch(e) { auth.signOut(); showToast("Access Denied", "error"); }
+    }
+
+    // UI Helpers (وەک خۆی)
+    function showLogin() { document.getElementById('login-sec').classList.remove('hidden'); document.getElementById('dash-sec').classList.add('hidden'); }
+    function showDashboard() { document.getElementById('login-sec').classList.add('hidden'); document.getElementById('dash-sec').classList.remove('hidden'); }
+    function logout() { auth.signOut(); location.reload(); }
+    
+    function showTab(t) { 
+        document.querySelectorAll('.tab-content').forEach(e=>e.classList.add('hidden')); 
+        document.getElementById('tab-'+t).classList.remove('hidden');
+        document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active','text-white'));
+        document.getElementById('btn-'+t).classList.add('active','text-white');
+    }
+
+    function initData() { loadGames(); loadSettings(); loadWithdrawals(); }
+
+    // Logic for Games
+    function addGame() {
+        const t=document.getElementById('g-title').value, i=document.getElementById('g-img').value, u=document.getElementById('g-url').value;
+        if(!t||!u) return showToast("Title/URL missing", "error");
+        db.collection(`artifacts/${appId}/public/data/games`).add({title:t, image:i, url:u, createdAt: firebase.firestore.FieldValue.serverTimestamp()})
+        .then(()=>{showToast("Game Added","success"); document.getElementById('g-title').value='';});
+    }
+
+    function loadGames() {
+        db.collection(`artifacts/${appId}/public/data/games`).onSnapshot(s => {
+            const l = document.getElementById('games-list'); l.innerHTML = '';
+            let g = []; s.forEach(d=>g.push({id:d.id, ...d.data()}));
+            g.sort((a,b)=>(b.createdAt?.seconds||0)-(a.createdAt?.seconds||0));
+            g.forEach(gm => {
+                l.innerHTML += `<div class="flex items-center gap-3 bg-slate-900 p-3 rounded border border-slate-700"><img src="${gm.image}" class="w-10 h-10 rounded"><div class="flex-1"><p class="text-sm font-bold">${gm.title}</p></div><button onclick="delGame('${gm.id}')" class="text-red-400"><i class="fas fa-trash"></i></button></div>`;
+            });
+        });
+    }
+    function delGame(id) { if(confirm("Delete?")) db.collection(`artifacts/${appId}/public/data/games`).doc(id).delete(); }
+
+    // Settings & Withdrawals
+    function saveSettings() {
+        const methods = document.getElementById('set-methods').value.split(',').map(s=>s.trim()).filter(s=>s);
+        const data = {
+            gameDuration: parseInt(document.getElementById('set-duration').value)||60,
+            gameReward: parseInt(document.getElementById('set-reward').value)||50,
+            referralBonus: parseInt(document.getElementById('set-refer').value)||500,
+            watchAdReward: parseInt(document.getElementById('set-ad-reward').value)||50,
+            watchAdDelay: parseInt(document.getElementById('set-ad-delay').value)||15,
+            coinValue: document.getElementById('set-val').value || "₹1",
+            paymentMethods: methods,
+            socials: {
+                telegram: document.getElementById('link-tg').value,
+                youtube: document.getElementById('link-yt').value,
+                instagram: document.getElementById('link-ig').value
+            }
+        };
+        db.collection(`artifacts/${appId}/public/data/settings`).doc('global').set(data, {merge:true})
+        .then(()=>showToast("Settings Saved!","success"));
+    }
+
+    function loadSettings() {
+        db.collection(`artifacts/${appId}/public/data/settings`).doc('global').get().then(d => {
+            if(d.exists) {
+                const data = d.data();
+                document.getElementById('set-duration').value = data.gameDuration||60;
+                document.getElementById('set-reward').value = data.gameReward||50;
+                document.getElementById('set-refer').value = data.referralBonus||500;
+                document.getElementById('set-ad-reward').value = data.watchAdReward||50;
+                document.getElementById('set-ad-delay').value = data.watchAdDelay||15;
+                document.getElementById('set-val').value = data.coinValue||"₹1";
+                document.getElementById('set-methods').value = (data.paymentMethods||[]).join(', ');
+                if(data.socials) {
+                    document.getElementById('link-tg').value = data.socials.telegram||'';
+                    document.getElementById('link-yt').value = data.socials.youtube||'';
+                    document.getElementById('link-ig').value = data.socials.instagram||'';
+                }
+            }
+        });
+    }
+
+    function loadWithdrawals() {
+        db.collection(`artifacts/${appId}/public/data/withdrawals`).onSnapshot(s => {
+            const l = document.getElementById('wd-list'); l.innerHTML = '';
+            let r = []; s.forEach(d=>{ if(d.data().status==='pending') r.push({id:d.id, ...d.data()}) });
+            if(r.length===0) return l.innerHTML='<p class="text-center text-slate-500 mt-10">All Clear</p>';
+            r.sort((a,b)=>(b.timestamp?.seconds||0)-(a.timestamp?.seconds||0));
+            r.forEach(req => {
+                l.innerHTML += `<div class="bg-slate-700/40 p-4 rounded border border-slate-600"><div class="flex justify-between"><b>${req.amount} Coins</b> <span class="uppercase text-xs bg-slate-600 px-2 py-1 rounded">${req.method}</span></div><div class="text-sm text-green-400 mt-1 font-mono">${req.details}</div><div class="flex gap-2 mt-2"><button onclick="upd('${req.id}','paid')" class="flex-1 bg-green-600 py-1 rounded text-sm">Pay</button><button onclick="upd('${req.id}','rejected')" class="flex-1 bg-red-600 py-1 rounded text-sm">Reject</button></div></div>`;
+            });
+        });
+    }
+    function upd(id, st) { db.collection(`artifacts/${appId}/public/data/withdrawals`).doc(id).update({status:st}); }
+
+    function showToast(m,t='info') {
+        const d=document.createElement('div'); d.className='toast'; 
+        d.innerHTML=`<i class="fas ${t==='success'?'fa-check':'fa-info-circle'} mr-2"></i> ${m}`;
+        document.getElementById('toast-container').appendChild(d);
+        setTimeout(()=>d.classList.add('show'),10); setTimeout(()=>{d.classList.remove('show');setTimeout(()=>d.remove(),300)},3000);
+    }
+</script>
