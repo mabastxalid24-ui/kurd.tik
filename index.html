@@ -13,22 +13,17 @@
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
 
-    <!-- Auth Screen -->
     <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center text-white">
         <h1 class="text-2xl font-bold">Loading PayPlus...</h1>
     </div>
 
-    <!-- Main Content -->
     <div id="main-app" class="hidden flex-1 overflow-y-auto pb-20 p-4">
-        <!-- Header -->
         <div class="bg-gradient-to-r from-amber-700 to-amber-900 p-5 rounded-2xl text-white mb-4">
             <p class="text-xs opacity-80">TOTAL BALANCE</p>
             <h2 id="balance-display" class="text-3xl font-bold">$0.00</h2>
             <p class="text-xs mt-2">Welcome, <span id="username"></span></p>
         </div>
 
-        <!-- Pages -->
-        <!-- Ads Page -->
         <div id="page-ads" class="page">
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
                 <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
@@ -46,34 +41,29 @@
                     <button class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.00</button>
                 </div>
             </div>
-            <!-- ئەم بەشە زیاد بکە لە دێڕی ٤٩ -->
-    <div class="grid grid-cols-2 gap-4 mt-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-            <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL WATCHED</p>
-            <h4 class="text-2xl font-bold">0 <span class="text-sm text-slate-400">ads</span></h4>
-     </div>
-            <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-            <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL EARNED</p>
-            <h4 class="text-2xl font-bold">$0</h4>
-        </div>
-    
-    </div>
-        
 
+            <div class="grid grid-cols-2 gap-4 mt-4">
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
+                    <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL WATCHED</p>
+                    <h4 class="text-2xl font-bold">0 <span class="text-sm text-slate-400">ads</span></h4>
+                </div>
+                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
+                    <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL EARNED</p>
+                    <h4 class="text-2xl font-bold">$0</h4>
+                </div>
+            </div>
+        </div> 
 
-        <!-- Tasks Page -->
         <div id="page-tasks" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
             <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
         </div>
 
-        <!-- Invite Page -->
         <div id="page-invite" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
             <div class="bg-white p-4 rounded-2xl border">Invite Content here...</div>
         </div>
 
-        <!-- Withdraw Page -->
         <div id="page-withdraw" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Payment Method</h3>
             <div class="grid grid-cols-3 gap-3 mb-6">
@@ -89,7 +79,6 @@
         </div>
     </div>
 
-    <!-- Bottom Nav -->
     <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
         <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
         <button onclick="showPage('tasks')"><i class="fas fa-tasks"></i><br>Tasks</button>
