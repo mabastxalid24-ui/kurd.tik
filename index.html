@@ -85,20 +85,40 @@
 <div id="page-withdraw" class="page hidden p-4">
     <h3 class="font-bold text-lg mb-4">Payment Method</h3>
     
-    <!-- سێ بەشەکەی پارەدان -->
+    <!-- سێ بەشەکەی پارەدان (بەکارهێنانی onclick بۆ گۆڕینی شێوازی داواکارییەکە) -->
     <div class="grid grid-cols-3 gap-3 mb-6">
-        <div class="bg-amber-50 border-2 border-amber-400 p-2 rounded-2xl text-center">
+        <div onclick="setMethod('USDT')" id="btn-usdt" class="method-btn bg-amber-50 border-2 border-amber-400 p-2 rounded-2xl text-center">
             <div class="text-2xl mb-1">₮</div>
-            <p class="text-[10px] font-bold">USDT TRC20</p>
+            <p class="text-[10px] font-bold">USDT</p>
         </div>
-        <div class="bg-white border border-slate-200 p-2 rounded-2xl text-center">
+        <div onclick="setMethod('PayPal')" id="btn-paypal" class="method-btn bg-white border border-slate-200 p-2 rounded-2xl text-center">
             <div class="text-2xl mb-1">🅿️</div>
             <p class="text-[10px] font-bold">PayPal</p>
         </div>
-        <div class="bg-white border border-slate-200 p-2 rounded-2xl text-center">
-            <div class="text-2xl mb-1">💰</div>
-            <p class="text-[10px] font-bold">FIB</p>
+        <div onclick="setMethod('Mobile')" id="btn-mobile" class="method-btn bg-white border border-slate-200 p-2 rounded-2xl text-center">
+            <div class="text-2xl mb-1">📱</div>
+            <p class="text-[10px] font-bold">Mobile</p>
         </div>
+    </div>
+
+    <input type="number" id="withdraw-amount" placeholder="Enter amount" class="w-full p-4 rounded-2xl border mb-4">
+    <input type="text" id="withdraw-input" placeholder="Enter details..." class="w-full p-4 rounded-2xl border mb-6">
+
+    <!-- دوگمەی Submit کە ئەلێرتەکە دەردەخات -->
+    <button onclick="submitWithdraw()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
+</div>
+
+<script>
+function setMethod(method) {
+    // لێرەدا دەتوانیت دەستکاری cssـی بەشەکان بکەیت بۆ ئەوەی ڕەنگەکەیان بگۆڕێت کاتێک دەیانکەیت
+}
+
+function submitWithdraw() {
+    // ئەو پەیامەی کە تۆ دەتەوێت دەربکەوێت
+    alert("Request for $100 has been submitted!");
+}
+</script>
+
     </div>
 
     <!-- AMOUNT -->
