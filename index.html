@@ -121,13 +121,25 @@ async function watchAd() {
 }
 
         async function startApp() {
+                    async function startApp() {
             const user = tg.initDataUnsafe.user;
             if (user) {
                 document.getElementById('username').innerText = user.first_name;
+                
+                // زیادکردنی بەشی خوێندنەوەی داتا لە فایبەرس
+                const userRef = db.collection('users').doc(user.id.toString());
+                const doc = await userRef.get();
+
+                if (doc.exists) {
+                    const data = doc.data();
+                    document.getElementById('balance-display').innerText = '$' + (data.balance || 0).toFixed(2);
+                }
+
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
             }
         }
+
         startApp();
     </script>
 </body>
