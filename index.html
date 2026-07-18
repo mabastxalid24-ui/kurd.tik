@@ -79,13 +79,11 @@
         <div class="bg-white p-4 rounded-2xl border">Invite Content here...</div>
     </div>
 </div>
-
 <!-- Withdraw Page -->
-<!-- Withdraw Page -->
-<div id="page-withdraw" class="page hidden 
+<div id="page-withdraw" class="page hidden p-4">
     <h3 class="font-bold text-lg mb-4">Payment Method</h3>
     
-    <!-- سێ بەشەکەی پارەدان (بەکارهێنانی onclick بۆ گۆڕینی شێوازی داواکارییەکە) -->
+    <!-- سێ بەشەکەی پارەدان -->
     <div class="grid grid-cols-3 gap-3 mb-6">
         <div onclick="setMethod('USDT')" id="btn-usdt" class="method-btn bg-amber-50 border-2 border-amber-400 p-2 rounded-2xl text-center">
             <div class="text-2xl mb-1">₮</div>
@@ -99,6 +97,16 @@
             <div class="text-2xl mb-1">📱</div>
             <p class="text-[10px] font-bold">Mobile</p>
         </div>
+    </div>
+
+    <!-- Amount and Address -->
+    <input type="number" id="withdraw-amount" placeholder="Enter amount" class="w-full p-4 rounded-2xl border mb-4">
+    <input type="text" id="withdraw-input" placeholder="Enter details..." class="w-full p-4 rounded-2xl border mb-6">
+
+    <!-- Submit Button -->
+    <button onclick="submitWithdraw()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
+</div>
+
     </div>
 
     <input type="number" id="withdraw-amount" placeholder="Enter amount" class="w-full p-4 rounded-2xl border mb-4">
