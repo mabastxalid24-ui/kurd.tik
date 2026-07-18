@@ -38,7 +38,7 @@
                             <p class="text-xs text-slate-400">Complete video to earn instantly</p>
                         </div>
                     </div>
-                    <button class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.00</button>
+                    <button onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.20</button>
                 </div>
             </div>
 
@@ -104,6 +104,21 @@
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-' + id).classList.remove('hidden');
         }
+async function watchAd() {
+    const user = tg.initDataUnsafe.user;
+    if (!user) return alert("User not found!");
+
+    const userRef = db.collection('users').doc(user.id.toString());
+
+    // زیادکردنی پارە و ژمارەی ڕیکلامەکان
+    await userRef.update({
+        balance: firebase.firestore.FieldValue.increment(0.20),
+        totalWatched: firebase.firestore.FieldValue.increment(1)
+    });
+
+    alert("Ad completed! $0.20 added.");
+    location.reload(); 
+}
 
         async function startApp() {
             const user = tg.initDataUnsafe.user;
