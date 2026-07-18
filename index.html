@@ -28,134 +28,56 @@
         </div>
 
         <!-- Pages -->
-       <!-- Ads Page -->
-<div id="page-ads" class="page">
-    <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
-        <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
-        <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn $0.20</p>
-        <div class="bg-slate-50 p-4 rounded-2xl border flex items-center justify-between">
-            <div class="flex items-center gap-3">
-                <div class="bg-slate-900 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                    <i class="fas fa-play"></i>
-                </div>
-                <div>
-                    <p class="font-bold">Watch Ad</p>
-                    <p class="text-xs text-slate-400">Complete video to earn instantly</p>
+        <!-- Ads Page -->
+        <div id="page-ads" class="page">
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
+                <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
+                <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn $0.20</p>
+                <div class="bg-slate-50 p-4 rounded-2xl border flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-slate-900 w-12 h-12 flex items-center justify-center rounded-full text-white">
+                            <i class="fas fa-play"></i>
+                        </div>
+                        <div>
+                            <p class="font-bold">Watch Ad</p>
+                            <p class="text-xs text-slate-400">Complete video to earn instantly</p>
+                        </div>
+                    </div>
+                    <button class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.00</button>
                 </div>
             </div>
-            <button class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.00</button>
         </div>
-        <div class="w-full bg-slate-200 h-2 rounded-full mt-4">
-            <div class="bg-amber-500 h-2 rounded-full" style="width: 0%;"></div>
+
+        <!-- Tasks Page -->
+        <div id="page-tasks" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
+            <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
         </div>
-        <p class="text-xs mt-2 text-slate-400 text-right">0 / 15 today</p>
-    </div>
 
-    <div class="grid grid-cols-2 gap-4 mt-4">
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-            <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL WATCHED</p>
-            <h4 class="text-2xl font-bold">0 <span class="text-sm text-slate-400">ads</span></h4>
+        <!-- Invite Page -->
+        <div id="page-invite" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
+            <div class="bg-white p-4 rounded-2xl border">Invite Content here...</div>
         </div>
-        <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-            <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL EARNED</p>
-            <h4 class="text-2xl font-bold">$0.00</h4>
+
+        <!-- Withdraw Page -->
+        <div id="page-withdraw" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Payment Method</h3>
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-white border p-2 rounded-2xl text-center">₮ USDT</div>
+                <div class="bg-white border p-2 rounded-2xl text-center">🅿️ PayPal</div>
+                <div class="bg-white border p-2 rounded-2xl text-center">📱 Mobile</div>
+            </div>
+            <label class="block text-sm font-bold mb-2">AMOUNT</label>
+            <input type="number" placeholder="e.g. 10.00" class="w-full p-4 rounded-2xl border mb-4">
+            <label class="block text-sm font-bold mb-2">WALLET ADDRESS</label>
+            <input type="text" placeholder="e.g. TXyz...abc" class="w-full p-4 rounded-2xl border mb-6">
+            <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
         </div>
-    </div>
-</div>
-
-<!-- Tasks Page -->
-<div id="page-tasks" class="page hidden">
-    <div class="p-4">
-        <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
-        <!-- لێرە دەتوانیت Tasksـەکانت زیاد بکەیت -->
-        <div class="bg-white p-4 rounded-2xl border mb-3">Tasks Content here...</div>
-    </div>
-</div>
-
-<!-- Invite Page -->
-<div id="page-invite" class="page hidden">
-    <div class="p-4">
-        <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
-        <div class="bg-white p-4 rounded-2xl border">Invite Content here...</div>
-    </div>
-
-<!-- Withdraw Page -->
-<div id="page-withdraw" class="page hidden p-4">
-    <h3 class="font-bold text-lg mb-4">Payment Method</h3>
-    
-    <!-- سێ بەشەکەی پارەدان -->
-    <div class="grid grid-cols-3 gap-3 mb-6">
-        <div class="bg-white border p-2 rounded-2xl text-center">₮ USDT</div>
-        <div class="bg-white border p-2 rounded-2xl text-center">🅿️ PayPal</div>
-        <div class="bg-white border p-2 rounded-2xl text-center">📱 Mobile</div>
-    </div>
-
-    <!-- Amount and Address -->
-    <label class="block text-sm font-bold mb-2">AMOUNT</label>
-    <input type="number" placeholder="e.g. 10.00" class="w-full p-4 rounded-2xl border mb-4">
-    
-    <label class="block text-sm font-bold mb-2">WALLET ADDRESS</label>
-    <input type="text" placeholder="e.g. TXyz...abc" class="w-full p-4 rounded-2xl border mb-6">
-
-    <button onclick="alert('Request for $100 submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-</div>
-
-
-
-    <!-- Amount and Address -->
-    <input type="number" id="withdraw-amount" placeholder="Enter amount" class="w-full p-4 rounded-2xl border mb-4">
-    <input type="text" id="withdraw-input" placeholder="Enter details..." class="w-full p-4 rounded-2xl border mb-6">
-
-    <!-- Submit Button -->
-    <button onclick="submitWithdraw()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-</div>
-
-    </div>
-
-    <input type="number" id="withdraw-amount" placeholder="Enter amount" class="w-full p-4 rounded-2xl border mb-4">
-    <input type="text" id="withdraw-input" placeholder="Enter details..." class="w-full p-4 rounded-2xl border mb-6">
-
-    <!-- دوگمەی Submit کە ئەلێرتەکە دەردەخات -->
-    <button onclick="submitWithdraw()" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-</div>
-
-<script>
-function setMethod(method) {
-    // لێرەدا دەتوانیت دەستکاری cssـی بەشەکان بکەیت بۆ ئەوەی ڕەنگەکەیان بگۆڕێت کاتێک دەیانکەیت
-}
-
-function submitWithdraw() {
-    // ئەو پەیامەی کە تۆ دەتەوێت دەربکەوێت
-    alert("Request for $100 has been submitted!");
-}
-</script>
-
-    </div>
-
-    <!-- AMOUNT -->
-    <div class="mb-4">
-        <label class="text-xs font-bold text-slate-500 uppercase">Amount</label>
-        <input type="number" placeholder="e.g. 10.00" class="w-full mt-1 p-4 rounded-2xl border border-slate-200 bg-white">
-        <p class="text-xs text-slate-400 mt-2">Available balance: $0.00 - Min $10.00</p>
-    </div>
-
-    <!-- WALLET ADDRESS -->
-    <div class="mb-6">
-        <label class="text-xs font-bold text-slate-500 uppercase">Wallet Address</label>
-        <input type="text" placeholder="e.g. TXyz...abc" class="w-full mt-1 p-4 rounded-2xl border border-slate-200 bg-white">
-    </div>
-
-    <!-- Submit Button -->
-    <button class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-</div>
-
-</div>
-
-
     </div>
 
     <!-- Bottom Nav -->
-    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3">
+    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
         <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
         <button onclick="showPage('tasks')"><i class="fas fa-tasks"></i><br>Tasks</button>
         <button onclick="showPage('invite')"><i class="fas fa-users"></i><br>Invite</button>
@@ -171,7 +93,6 @@ function submitWithdraw() {
             messagingSenderId: "999271629770",
             appId: "1:999271629770:web:e92f9305589c512eed8533"
         };
-        
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
@@ -182,32 +103,12 @@ function submitWithdraw() {
             document.getElementById('page-' + id).classList.remove('hidden');
         }
 
-        async function loadUserData(user) {
-            const userRef = db.collection('users').doc(String(user.id));
-            const doc = await userRef.get();
-
-            if (!doc.exists) {
-                await userRef.set({
-                    balance: 0,
-                    username: user.first_name,
-                    joinedAt: new Date()
-                });
-                document.getElementById('balance-display').innerText = "$0.00";
-            } else {
-                const data = doc.data();
-                document.getElementById('balance-display').innerText = "$" + (data.balance || 0).toFixed(2);
-            }
-        }
-
         async function startApp() {
             const user = tg.initDataUnsafe.user;
             if (user) {
                 document.getElementById('username').innerText = user.first_name;
-                await loadUserData(user);
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-            } else {
-                document.body.innerHTML = "<h1 class='p-10 text-red-500'>تکایە تەنها لە تێلێگرامەوە بیکەرەوە!</h1>";
             }
         }
         startApp();
