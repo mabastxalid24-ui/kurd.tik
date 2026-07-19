@@ -145,15 +145,18 @@ async function watchAd() {
     location.reload(); 
 }
 
-  async function startApp() {
+ async function startApp() {
             const user = tg.initDataUnsafe.user;
-            if (!user) return;
+            if (!user) {
+                document.getElementById('auth-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                return;
+            }
 
-            const startParam = tg.initDataUnsafe.start_param; 
             const userRef = db.collection('users').doc(user.id.toString());
-            const doc = await userRef.get();
+            const docSnapshot = await userRef.get();
 
-            if (!doc.exists) {
+            if (!docSnapshot.exists) {
                 await userRef.set({
                     balance: 0,
                     totalWatched: 0,
@@ -161,7 +164,8 @@ async function watchAd() {
                     friendsInvited: 0,
                     earnedInvites: 0
                 });
-
+                
+                const startParam = tg.initDataUnsafe.start_param;
                 if (startParam) {
                     const inviterRef = db.collection('users').doc(startParam);
                     await inviterRef.update({
@@ -170,30 +174,9 @@ async function watchAd() {
                         earnedInvites: firebase.firestore.FieldValue.increment(0.50)
                     });
                 }
-            } // <--- ئەمە گرنگە: لێرە `if`ـەکە دادەخەین
-
-            // کۆدەکانی خوارەوە لە دەرەوەی `if`ـەکەن و بۆ هەمووان کار دەکەن
-            const docAfter = await userRef.get(); // داتای نوێ وەردەگرینەوە
-            const userData = docAfter.data();
+            }
             
-            document.getElementById('username').innerText = user.first_name;
-            document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
-            document.getElementById('total-watched').innerText = userData.totalWatched || 0;
-            document.getElementById('friends-count').innerText = userData.friendsInvited || 0;
-            document.getElementById('earned-from-invites').innerText = '$' + (userData.earnedInvites || 0).toFixed(2);
-            document.getElementById('invite-link').innerText = 'https://t.me/kurdnbd_bot/app?startapp=' + user.id;
-
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
-        }  
-                               
-
-                                        
-            
-            
-         // دێڕی ١٩٦
-            const docSnapshot = await userRef.get();
-            const userData = docSnapshot.exists ? docSnapshot.data() : { balance: 0, totalWatched: 0, friendsInvited: 0, earnedInvites: 0 };
+            const userData = (await userRef.get()).data();
             
             document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
             document.getElementById('total-watched').innerText = userData.totalWatched || 0;
@@ -203,10 +186,9 @@ async function watchAd() {
 
             document.getElementById('auth-screen').classList.add('hidden');
             document.getElementById('main-app').classList.remove('hidden');
-    
+        }
 
-        
-
+        // ئەمە بە تەنها بانگی فانکشنەکە دەکات
         startApp();
     </script>
 </body>
