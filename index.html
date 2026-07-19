@@ -191,7 +191,10 @@ async function watchAd() {
                                         
             
             
-            const userData = doc.exists ? doc.data() : { balance: 0, totalWatched: 0, friendsInvited: 0, earnedInvites: 0 };
+         // دێڕی ١٩٦
+            const docSnapshot = await userRef.get();
+            const userData = docSnapshot.exists ? docSnapshot.data() : { balance: 0, totalWatched: 0, friendsInvited: 0, earnedInvites: 0 };
+            
             document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
             document.getElementById('total-watched').innerText = userData.totalWatched || 0;
             document.getElementById('friends-count').innerText = userData.friendsInvited || 0;
