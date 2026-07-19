@@ -145,7 +145,47 @@ async function watchAd() {
     location.reload(); 
 }
 
-    
+  async function startApp() {
+            const user = tg.initDataUnsafe.user;
+            if (!user) return;
+
+            const startParam = tg.initDataUnsafe.start_param; 
+            const userRef = db.collection('users').doc(user.id.toString());
+            const doc = await userRef.get();
+
+            if (!doc.exists) {
+                await userRef.set({
+                    balance: 0,
+                    totalWatched: 0,
+                    username: user.first_name,
+                    friendsInvited: 0,
+                    earnedInvites: 0
+                });
+
+                if (startParam) {
+                    const inviterRef = db.collection('users').doc(startParam);
+                    await inviterRef.update({
+                        friendsInvited: firebase.firestore.FieldValue.increment(1),
+                        balance: firebase.firestore.FieldValue.increment(0.50),
+                        earnedInvites: firebase.firestore.FieldValue.increment(0.50)
+                    });
+                }
+            } // <--- ئەمە گرنگە: لێرە `if`ـەکە دادەخەین
+
+            // کۆدەکانی خوارەوە لە دەرەوەی `if`ـەکەن و بۆ هەمووان کار دەکەن
+            const docAfter = await userRef.get(); // داتای نوێ وەردەگرینەوە
+            const userData = docAfter.data();
+            
+            document.getElementById('username').innerText = user.first_name;
+            document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
+            document.getElementById('total-watched').innerText = userData.totalWatched || 0;
+            document.getElementById('friends-count').innerText = userData.friendsInvited || 0;
+            document.getElementById('earned-from-invites').innerText = '$' + (userData.earnedInvites || 0).toFixed(2);
+            document.getElementById('invite-link').innerText = 'https://t.me/kurdnbd_bot/app?startapp=' + user.id;
+
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+        }  
                                
 
                                         
