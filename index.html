@@ -119,6 +119,11 @@
         const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
         tg.ready();
+function copyLink() {
+    const link = document.getElementById('invite-link').innerText;
+    navigator.clipboard.writeText(link);
+    alert("Link copied!");
+}
 
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
@@ -141,23 +146,44 @@ async function watchAd() {
 }
 
     
-                    async function startApp() {
+                       async function startApp() {
             const user = tg.initDataUnsafe.user;
-            if (user) {
-                document.getElementById('username').innerText = user.first_name;
-                
-                // زیادکردنی بەشی خوێندنەوەی داتا لە فایبەرس
-                const userRef = db.collection('users').doc(user.id.toString());
-                const doc = await userRef.get();
+            if (!user) return;
 
-                if (doc.exists) {
-                    const data = doc.data();
-                    document.getElementById('balance-display').innerText = '$' + (data.balance || 0).toFixed(2);
+            const startParam = tg.initDataUnsafe.start_param; 
+            const userRef = db.collection('users').doc(user.id.toString());
+            const doc = await userRef.get();
+
+            if (!doc.exists) {
+                await userRef.set({
+                    balance: 0,
+                    totalWatched: 0,
+                    username: user.first_name,
+                    friendsInvited: 0,
+                    earnedInvites: 0
+                });
+
+                if (startParam) {
+                    const inviterRef = db.collection('users').doc(startParam);
+                    await inviterRef.update({
+                        friendsInvited: firebase.firestore.FieldValue.increment(1),
+                        balance: firebase.firestore.FieldValue.increment(0.50),
+                        earnedInvites: firebase.firestore.FieldValue.increment(0.50)
+                    });
                 }
-
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
             }
+            
+            const userData = doc.exists ? doc.data() : { balance: 0, totalWatched: 0, friendsInvited: 0, earnedInvites: 0 };
+            document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
+            document.getElementById('total-watched').innerText = userData.totalWatched || 0;
+            document.getElementById('friends-count').innerText = userData.friendsInvited || 0;
+            document.getElementById('earned-from-invites').innerText = '$' + (userData.earnedInvites || 0).toFixed(2);
+            document.getElementById('invite-link').innerText = 'https://t.me/YourBotName_bot/app?startapp=' + user.id;
+
+            document.getElementById('auth-screen').classList.add('hidden');
+            document.getElementById('main-app').classList.remove('hidden');
+        }
+
         }
 
         startApp();
