@@ -139,8 +139,10 @@ function copyLink() {
     }
 
     if (dailyCount >= 15) {
-        alert("You have reached the daily limit of 15 ads! Come back tomorrow.");
-        return;
+    alert("You have reached the daily limit of 15 ads!");
+    return;
+}
+
     }
 
     await userRef.update({
@@ -168,11 +170,13 @@ async function startApp() {
     const docSnapshot = await userRef.get();
 
     if (!docSnapshot.exists) {
-        await userRef.set({
+                await userRef.set({
             balance: 0,
             totalWatched: 0,
+            dailyAdsCount: 0,
             username: user.first_name
         });
+
     }
     
     const userData = (await userRef.get()).data();
