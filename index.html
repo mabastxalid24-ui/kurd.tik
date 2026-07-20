@@ -45,7 +45,8 @@
     <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
         <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
     </div>
-    <div class="flex justify-between items-center mt-1">
+   <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
+
         <span class="text-[10px] text-slate-400 font-bold uppercase">Daily Limit</span>
         <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
     </div>
@@ -178,6 +179,7 @@ async function startApp() {
     
     document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
     document.getElementById('username').innerText = user.first_name;
+    document.getElementById('total-watched-number').innerText = userData.totalWatched || 0;
 
     document.getElementById('auth-screen').classList.add('hidden');
     document.getElementById('main-app').classList.remove('hidden');
