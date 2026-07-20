@@ -41,6 +41,15 @@
                     <button onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.20</button>
                 </div>
             </div>
+<div class="mt-3 px-1">
+    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+        <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
+    </div>
+    <div class="flex justify-between items-center mt-1">
+        <span class="text-[10px] text-slate-400 font-bold uppercase">Daily Limit</span>
+        <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
+    </div>
+</div>
 
             <div class="grid grid-cols-2 gap-4 mt-4">
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
