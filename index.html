@@ -110,21 +110,38 @@ function copyLink() {
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-' + id).classList.remove('hidden');
-        }
-async function watchAd() {
+        }async function watchAd() {
     const user = tg.initDataUnsafe.user;
     if (!user) return alert("User not found!");
 
     const userRef = db.collection('users').doc(user.id.toString());
+    const doc = await userRef.get();
+    
+    let data = doc.exists ? doc.data() : {};
+    let dailyCount = data.dailyAdsCount || 0;
+    let lastDate = data.lastAdDate ? data.lastAdDate.toDate() : new Date(0);
+    
+    let now = new Date();
+    let isNewDay = now.toDateString() !== lastDate.toDateString();
+    
+    if (isNewDay) {
+        dailyCount = 0;
+    }
 
-    // زیادکردنی پارە و ژمارەی ڕیکلامەکان
+    if (dailyCount >= 15) {
+        alert("You have reached the daily limit of 15 ads! Come back tomorrow.");
+        return;
+    }
+
     await userRef.update({
         balance: firebase.firestore.FieldValue.increment(0.20),
-        totalWatched: firebase.firestore.FieldValue.increment(1)
+        totalWatched: firebase.firestore.FieldValue.increment(1),
+        dailyAdsCount: dailyCount + 1,
+        lastAdDate: firebase.firestore.FieldValue.serverTimestamp()
     });
 
     alert("Ad completed! $0.20 added.");
-    location.reload(); 
+    location.reload();
 }
 
 async function startApp() {
