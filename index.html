@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
 </head>
 <body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
 
@@ -41,26 +42,13 @@
                     <button onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+$0.20</button>
                 </div>
             </div>
-<div class="mt-3 px-1">
-    <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-        <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
-    </div>
-   <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-
-        <span class="text-[10px] text-slate-400 font-bold uppercase">Daily Limit</span>
-        <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
-    </div>
-</div>
-
-            <div class="grid grid-cols-2 gap-4 mt-4">
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-                    <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL WATCHED</p>
-                    <h4 class="text-2xl font-bold">0 <span class="text-sm text-slate-400">ads</span></h4>
+            <div class="mt-3 px-1">
+                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
+                    <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
                 </div>
-                <div class="bg-white p-4 rounded-2xl border border-slate-200 text-center">
-                    <p class="text-[10px] uppercase text-slate-400 font-bold">TOTAL EARNED</p>
-                    <h4 class="text-2xl font-bold">$0</h4>
-                </div>
+                <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
+                <span class="text-[10px] text-slate-400 font-bold uppercase">Daily Limit</span>
+                <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
             </div>
         </div> 
 
@@ -69,12 +57,12 @@
             <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
         </div>
 
-       
-    </div>
-    
- 
-</div>
-
+        <div id="page-invite" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
+            <p class="text-sm text-slate-500 mb-2">Share your link:</p>
+            <div id="invite-link" class="bg-white p-3 rounded-xl border mb-3 text-sm text-slate-600">https://t.me/cashpay_bot</div>
+            <button onclick="copyLink()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold">Copy Link</button>
+        </div>
 
         <div id="page-withdraw" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Payment Method</h3>
@@ -98,7 +86,7 @@
         <button onclick="showPage('withdraw')"><i class="fas fa-dollar-sign"></i><br>Withdraw</button>
     </nav>
 
-       <script>
+    <script>
         const firebaseConfig = {
             apiKey: "AIzaSyDt2kWrpOg3YcYb2v1p7RIohALvQ6iBap8",
             authDomain: "topkurd-2799c.firebaseapp.com",
@@ -112,13 +100,12 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        // کۆنترۆڵەری ئەدسگرام بە ئایدی ٣٩١٨٣
-        const adController = window.Adsgram.init({ blockId: "39183" });
-
         function copyLink() {
-            const link = document.getElementById('invite-link').innerText;
-            navigator.clipboard.writeText(link);
-            alert("Link copied!");
+            const linkElement = document.getElementById('invite-link');
+            if (linkElement) {
+                navigator.clipboard.writeText(linkElement.innerText);
+                alert("Link copied!");
+            }
         }
 
         function showPage(id) {
@@ -127,76 +114,90 @@
         }
 
         async function watchAd() {
-            const user = tg.initDataUnsafe.user;
-            if (!user) return alert("User not found!");
+            try {
+                if (!window.Adsgram) {
+                    alert("Adsgram script not loaded yet!");
+                    return;
+                }
+                const adController = window.Adsgram.init({ blockId: "39183" });
+                
+                const user = tg.initDataUnsafe.user;
+                if (!user) return alert("User not found!");
 
-            const userRef = db.collection('users').doc(user.id.toString());
-            const doc = await userRef.get();
-            
-            let data = doc.exists ? doc.data() : {};
-            let dailyCount = data.dailyAdsCount || 0;
-            let lastDate = data.lastAdDate ? data.lastAdDate.toDate() : new Date(0);
-            
-            let now = new Date();
-            let isNewDay = now.toDateString() !== lastDate.toDateString();
-            
-            if (isNewDay) {
-                dailyCount = 0;
-            }
+                const userRef = db.collection('users').doc(user.id.toString());
+                const doc = await userRef.get();
+                
+                let data = doc.exists ? doc.data() : {};
+                let dailyCount = data.dailyAdsCount || 0;
+                let lastDate = data.lastAdDate ? data.lastAdDate.toDate() : new Date(0);
+                
+                let now = new Date();
+                let isNewDay = now.toDateString() !== lastDate.toDateString();
+                
+                if (isNewDay) {
+                    dailyCount = 0;
+                }
 
-            if (dailyCount >= 15) {
-                alert("You have reached the daily limit of 15 ads!");
-                return;
-            }
+                if (dailyCount >= 15) {
+                    alert("You have reached the daily limit of 15 ads!");
+                    return;
+                }
 
-            // لێرەدا ڕیکلامەکە پیشان دەدرێت پێش ئەوەی پارە زیاد بکرێت
-            adController.show()
-                .then(async (result) => {
-                    await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.20),
-                        totalWatched: firebase.firestore.FieldValue.increment(1),
-                        dailyAdsCount: dailyCount + 1,
-                        lastAdDate: firebase.firestore.FieldValue.serverTimestamp()
+                adController.show()
+                    .then(async (result) => {
+                        await userRef.update({
+                            balance: firebase.firestore.FieldValue.increment(0.20),
+                            totalWatched: firebase.firestore.FieldValue.increment(1),
+                            dailyAdsCount: dailyCount + 1,
+                            lastAdDate: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+
+                        alert("Ad completed! $0.20 added.");
+                        location.reload();
+                    })
+                    .catch((err) => {
+                        console.log("Ad error or skipped", err);
+                        alert("Ad was closed or not completed.");
                     });
-
-                    alert("Ad completed! $0.20 added.");
-                    location.reload();
-                })
-                .catch((err) => {
-                    console.log("Ad error or skipped", err);
-                    alert("Ad was closed or not completed.");
-                });
+            } catch (e) {
+                console.error("Ad error:", e);
+            }
         }
 
         async function startApp() {
-            const user = tg.initDataUnsafe.user;
-            
-            if (!user) {
+            try {
+                const user = tg.initDataUnsafe.user;
+                
+                if (!user) {
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    return;
+                }
+
+                const userRef = db.collection('users').doc(user.id.toString());
+                const docSnapshot = await userRef.get();
+
+                if (!docSnapshot.exists) {
+                    await userRef.set({
+                        balance: 0,
+                        totalWatched: 0,
+                        dailyAdsCount: 0,
+                        username: user.first_name || "User"
+                    });
+                }
+                
+                const userData = (await userRef.get()).data() || {};
+                
+                document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
+                document.getElementById('username').innerText = user.first_name || "User";
+                document.getElementById('total-watched-number').innerText = userData.totalWatched || 0;
+
+            } catch (err) {
+                console.error("StartApp error:", err);
+            } finally {
                 document.getElementById('auth-screen').classList.add('hidden');
                 document.getElementById('main-app').classList.remove('hidden');
-                return;
             }
-
-            const userRef = db.collection('users').doc(user.id.toString());
-            const docSnapshot = await userRef.get();
-
-            if (!docSnapshot.exists) {
-                await userRef.set({
-                    balance: 0,
-                    totalWatched: 0,
-                    dailyAdsCount: 0,
-                    username: user.first_name
-                });
-            }
-            
-            const userData = (await userRef.get()).data();
-            
-            document.getElementById('balance-display').innerText = '$' + (userData.balance || 0).toFixed(2);
-            document.getElementById('username').innerText = user.first_name;
-            document.getElementById('total-watched-number').innerText = userData.totalWatched || 0;
-
-            document.getElementById('auth-screen').classList.add('hidden');
-            document.getElementById('main-app').classList.remove('hidden');
         }
         
         startApp();
