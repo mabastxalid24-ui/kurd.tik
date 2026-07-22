@@ -78,6 +78,37 @@
             <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
         </div>
     </div>
+<!-- بەشی یارییەکان -->
+<div class="bg-gradient-to-r from-orange-500 to-red-600 p-5 rounded-3xl text-white shadow-sm mt-4">
+    <div class="flex items-center gap-3 mb-2">
+        <div class="bg-white/20 w-10 h-10 flex items-center justify-center rounded-full text-white">
+            <i class="fas fa-gamepad"></i>
+        </div>
+        <div>
+            <h3 class="font-bold text-lg">Play Games</h3>
+            <p class="text-xs opacity-90">Play HTML5 games and have fun!</p>
+        </div>
+    </div>
+    <button onclick="openGamesPage()" class="w-full mt-3 bg-white text-orange-600 py-3 rounded-xl font-bold shadow">PLAY NOW</button>
+</div>
+
+<!-- پەڕەی لیستکردنی یارییەکان (سەرەتایی شاراوە) -->
+<div id="page-games-list" class="page hidden p-4">
+    <div class="flex items-center justify-between mb-4">
+        <h3 class="font-bold text-lg">Game Zone</h3>
+        <button onclick="showPage('ads')" class="text-sm text-blue-600 font-bold">Back Home</button>
+    </div>
+    <div class="grid grid-cols-2 gap-3">
+        <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
+            <p class="font-bold text-sm mb-2 text-slate-800">Yeti Sensation</p>
+            <button onclick="playGame('https://gemioli.com/yetisensation/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
+        </div>
+        <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
+            <p class="font-bold text-sm mb-2 text-slate-800">Slinguin</p>
+            <button onclick="playGame('https://gemioli.com/slinguin/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
+        </div>
+    </div>
+</div>
 
     <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
         <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
