@@ -146,14 +146,17 @@
             document.getElementById('page-' + id).classList.remove('hidden');
         }
 
-        // زیادکردنی فەنکشنەکانی یارییەکان بۆ ئەوەی کار بکەن
         function openGamesPage() {
             document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
             document.getElementById('page-games-list').classList.remove('hidden');
         }
 
         function playGame(url) {
-            window.open(url, '_blank');
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                window.Telegram.WebApp.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
         }
 
         async function watchAd() {
