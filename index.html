@@ -66,20 +66,20 @@
             </div>
         </div> 
 
-        <!-- پەڕەی لیستکردنی یارییەکان و نمایشکردنی لە ناو Iframe -->
-        <div id="page-games-list" class="page hidden p-4">
-            <div class="flex items-center justify-between mb-4">
+        <!-- پەڕەی لیستکردنی یارییەکان و نمایشکردنی بە شێوەیەکی گەورە و پڕ شاشە -->
+        <div id="page-games-list" class="page hidden p-2">
+            <div class="flex items-center justify-between mb-3 px-2">
                 <h3 class="font-bold text-lg">Game Zone</h3>
                 <button onclick="showPage('ads')" class="text-sm text-blue-600 font-bold">Back Home</button>
             </div>
             
-            <!-- کایەی ئایفریم بۆ ئەوەی یارییەکان لە ناو ئەپەکە بكرێنەوە -->
-            <div id="game-container" class="hidden mb-4">
-                <iframe id="game-frame" src="" class="w-full h-[450px] rounded-2xl border" frameborder="0"></iframe>
-                <button onclick="closeGame()" class="w-full mt-2 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">CLOSE GAME</button>
+            <!-- ئایفریمی گەورەکراو بۆ ئەوەی یارییەکان شاشەی تەواو داگیر بکەن -->
+            <div id="game-container" class="hidden mb-3">
+                <iframe id="game-frame" src="" class="w-full h-[78vh] rounded-2xl border bg-black" frameborder="0"></iframe>
+                <button onclick="closeGame()" class="w-full mt-2 bg-red-600 text-white py-3 rounded-2xl text-sm font-bold shadow-md">CLOSE GAME</button>
             </div>
 
-            <div id="games-grid" class="grid grid-cols-2 gap-3">
+            <div id="games-grid" class="grid grid-cols-2 gap-3 px-1">
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
                     <p class="font-bold text-sm mb-2 text-slate-800">Yeti Sensation</p>
                     <button onclick="playGameInApp('https://gemioli.com/yetisensation/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
@@ -158,7 +158,6 @@
             document.getElementById('page-games-list').classList.remove('hidden');
         }
 
-        // فەنکشنی کردنەوەی یاری لە ناو ئەپەکە بە Iframe
         function playGameInApp(url) {
             document.getElementById('games-grid').classList.add('hidden');
             const container = document.getElementById('game-container');
@@ -167,7 +166,6 @@
             container.classList.remove('hidden');
         }
 
-        // فەنکشنی داخستنی یاری و گەڕانەوە بۆ لیستەکە
         function closeGame() {
             const iframe = document.getElementById('game-frame');
             iframe.src = ''; 
