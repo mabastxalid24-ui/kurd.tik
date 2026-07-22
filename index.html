@@ -51,7 +51,7 @@
                 <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
             </div>
 
-            <!-- بەشی یارییەکان (لە ناو پەڕەی ئەدسدا جێگیرکراوە) -->
+            <!-- بەشی یارییەکان -->
             <div class="bg-gradient-to-r from-orange-500 to-red-600 p-5 rounded-3xl text-white shadow-sm mt-4">
                 <div class="flex items-center gap-3 mb-2">
                     <div class="bg-white/20 w-10 h-10 flex items-center justify-center rounded-full text-white">
@@ -66,20 +66,27 @@
             </div>
         </div> 
 
-        <!-- پەڕەی لیستکردنی یارییەکان (سەرەتایی شاراوە) -->
+        <!-- پەڕەی لیستکردنی یارییەکان و نمایشکردنی لە ناو Iframe -->
         <div id="page-games-list" class="page hidden p-4">
             <div class="flex items-center justify-between mb-4">
                 <h3 class="font-bold text-lg">Game Zone</h3>
                 <button onclick="showPage('ads')" class="text-sm text-blue-600 font-bold">Back Home</button>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+            
+            <!-- کایەی ئایفریم بۆ ئەوەی یارییەکان لە ناو ئەپەکە بكرێنەوە -->
+            <div id="game-container" class="hidden mb-4">
+                <iframe id="game-frame" src="" class="w-full h-[450px] rounded-2xl border" frameborder="0"></iframe>
+                <button onclick="closeGame()" class="w-full mt-2 bg-red-600 text-white py-2 rounded-xl text-xs font-bold">CLOSE GAME</button>
+            </div>
+
+            <div id="games-grid" class="grid grid-cols-2 gap-3">
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
                     <p class="font-bold text-sm mb-2 text-slate-800">Yeti Sensation</p>
-                    <button onclick="playGame('https://gemioli.com/yetisensation/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
+                    <button onclick="playGameInApp('https://gemioli.com/yetisensation/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
                 </div>
                 <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
                     <p class="font-bold text-sm mb-2 text-slate-800">Slinguin</p>
-                    <button onclick="playGame('https://gemioli.com/slinguin/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
+                    <button onclick="playGameInApp('https://gemioli.com/slinguin/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
                 </div>
             </div>
         </div>
@@ -151,12 +158,21 @@
             document.getElementById('page-games-list').classList.remove('hidden');
         }
 
-        function playGame(url) {
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(url);
-            } else {
-                window.open(url, '_blank');
-            }
+        // فەنکشنی کردنەوەی یاری لە ناو ئەپەکە بە Iframe
+        function playGameInApp(url) {
+            document.getElementById('games-grid').classList.add('hidden');
+            const container = document.getElementById('game-container');
+            const iframe = document.getElementById('game-frame');
+            iframe.src = url;
+            container.classList.remove('hidden');
+        }
+
+        // فەنکشنی داخستنی یاری و گەڕانەوە بۆ لیستەکە
+        function closeGame() {
+            const iframe = document.getElementById('game-frame');
+            iframe.src = ''; 
+            document.getElementById('game-container').classList.add('hidden');
+            document.getElementById('games-grid').classList.remove('hidden');
         }
 
         async function watchAd() {
