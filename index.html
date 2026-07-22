@@ -66,17 +66,19 @@
             </div>
         </div> 
 
-        <!-- پەڕەی لیستکردنی یارییەکان و نمایشکردنی بە شێوەیەکی گەورە و پڕ شاشە -->
+        <!-- پەڕەی لیستکردنی یارییەکان (دوگمەی داخستن הוوە پێشەوە بۆ ئەوەی هەمیشە دیار بێت) -->
         <div id="page-games-list" class="page hidden p-2">
             <div class="flex items-center justify-between mb-3 px-2">
-                <h3 class="font-bold text-lg">Game Zone</h3>
-                <button onclick="showPage('ads')" class="text-sm text-blue-600 font-bold">Back Home</button>
+                <h3 class="font-bold text-lg" id="game-zone-title">Game Zone</h3>
+                <button onclick="showPage('ads')" id="back-home-btn" class="text-sm text-blue-600 font-bold">Back Home</button>
             </div>
             
-            <!-- ئایفریمی گەورەکراو بۆ ئەوەی یارییەکان شاشەی تەواو داگیر بکەن -->
+            <!-- دوگمەی داخستنی یاری کە ئێستا لە سەرەوە دانراوە بۆ ئەوەی هەرگیز ون نەبێت -->
             <div id="game-container" class="hidden mb-3">
-                <iframe id="game-frame" src="" class="w-full h-[78vh] rounded-2xl border bg-black" frameborder="0"></iframe>
-                <button onclick="closeGame()" class="w-full mt-2 bg-red-600 text-white py-3 rounded-2xl text-sm font-bold shadow-md">CLOSE GAME</button>
+                <button onclick="closeGame()" class="w-full mb-2 bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2">
+                    <i class="fas fa-times-circle"></i> CLOSE GAME
+                </button>
+                <iframe id="game-frame" src="" class="w-full h-[64vh] rounded-2xl border bg-black" frameborder="0"></iframe>
             </div>
 
             <div id="games-grid" class="grid grid-cols-2 gap-3 px-1">
