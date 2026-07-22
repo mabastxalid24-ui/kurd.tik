@@ -51,33 +51,6 @@
                 <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
             </div>
         </div> 
-
-        <div id="page-tasks" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
-            <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
-        </div>
-
-        <div id="page-invite" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
-            <p class="text-sm text-slate-500 mb-2">Share your link:</p>
-            <div id="invite-link" class="bg-white p-3 rounded-xl border mb-3 text-sm text-slate-600">https://t.me/cashpay_bot</div>
-            <button onclick="copyLink()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold">Copy Link</button>
-        </div>
-
-        <div id="page-withdraw" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Payment Method</h3>
-            <div class="grid grid-cols-3 gap-3 mb-6">
-                <div class="bg-white border p-2 rounded-2xl text-center">₮ USDT</div>
-                <div class="bg-white border p-2 rounded-2xl text-center">🅿️ PayPal</div>
-                <div class="bg-white border p-2 rounded-2xl text-center">📱 Mobile</div>
-            </div>
-            <label class="block text-sm font-bold mb-2">AMOUNT</label>
-            <input type="number" placeholder="e.g. 10.00" class="w-full p-4 rounded-2xl border mb-4">
-            <label class="block text-sm font-bold mb-2">WALLET ADDRESS</label>
-            <input type="text" placeholder="e.g. TXyz...abc" class="w-full p-4 rounded-2xl border mb-6">
-            <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-        </div>
-    </div>
 <!-- بەشی یارییەکان -->
 <div class="bg-gradient-to-r from-orange-500 to-red-600 p-5 rounded-3xl text-white shadow-sm mt-4">
     <div class="flex items-center gap-3 mb-2">
@@ -109,6 +82,34 @@
         </div>
     </div>
 </div>
+
+        <div id="page-tasks" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
+            <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
+        </div>
+
+        <div id="page-invite" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
+            <p class="text-sm text-slate-500 mb-2">Share your link:</p>
+            <div id="invite-link" class="bg-white p-3 rounded-xl border mb-3 text-sm text-slate-600">https://t.me/cashpay_bot</div>
+            <button onclick="copyLink()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold">Copy Link</button>
+        </div>
+
+        <div id="page-withdraw" class="page hidden p-4">
+            <h3 class="font-bold text-lg mb-4">Payment Method</h3>
+            <div class="grid grid-cols-3 gap-3 mb-6">
+                <div class="bg-white border p-2 rounded-2xl text-center">₮ USDT</div>
+                <div class="bg-white border p-2 rounded-2xl text-center">🅿️ PayPal</div>
+                <div class="bg-white border p-2 rounded-2xl text-center">📱 Mobile</div>
+            </div>
+            <label class="block text-sm font-bold mb-2">AMOUNT</label>
+            <input type="number" placeholder="e.g. 10.00" class="w-full p-4 rounded-2xl border mb-4">
+            <label class="block text-sm font-bold mb-2">WALLET ADDRESS</label>
+            <input type="text" placeholder="e.g. TXyz...abc" class="w-full p-4 rounded-2xl border mb-6">
+            <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
+        </div>
+    </div>
+
 
     <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
         <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
