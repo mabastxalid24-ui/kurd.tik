@@ -176,34 +176,52 @@
         }
 
         async function watchAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                const adController = window.Adsgram.init({ blockId: "39352" });
-                
-                const user = tg.initDataUnsafe.user;
-                if (!user) return alert("User not found!");
+    try {
+        if (!window.Adsgram) {
+            alert("Adsgram script not loaded yet!");
+            return;
+        }
+        
+        const adController = window.Adsgram.init({ blockId: "39352" });
+        
+        // پیشاندانی ڕیکلامی ئەدزگرام
+        await adController.show();
 
-                const userRef = db.collection('users').doc(user.id.toString());
-                const doc = await userRef.get();
-                
-                let data = doc.exists ? doc.data() : {};
-                let dailyCount = data.dailyAdsCount || 0;
-                let lastDate = data.lastAdDate ? data.lastAdDate.toDate() : new Date(0);
-                
-                let now = new Date();
-                let isNewDay = now.toDateString() !== lastDate.toDateString();
-                
-                if (isNewDay) {
-                    dailyCount = 0;
-                }
+        // قفڵکردنی دوگمە و دەستپێکردنی تایمەری ١٠ چرکە
+        startAdTimer(10);
 
-                if (dailyCount >= 15) {
-                    alert("You have reached the daily limit of 15 ads!");
-                    return;
-                }
+    } catch (e) {
+        console.log("Ad error:", e);
+    }
+}
+
+function startAdTimer(seconds) {
+    const btn = document.getElementById('adButton');
+    const timerText = document.getElementById('timerText');
+    const countdownSpan = document.getElementById('countdown');
+    
+    if(!btn) return;
+    
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    if(timerText) timerText.classList.remove('hidden');
+
+    let timeLeft = seconds;
+    if(countdownSpan) countdownSpan.textContent = timeLeft;
+
+    let timer = setInterval(function() {
+        timeLeft--;
+        if(countdownSpan) countdownSpan.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            if(timerText) timerText.classList.add('hidden');
+        }
+    }, 1000);
+}
+
 
                 adController.show()
                     .then(async (result) => {
