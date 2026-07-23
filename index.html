@@ -93,7 +93,18 @@
 
         <div id="page-tasks" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
-            <div class="bg-white p-4 rounded-2xl border">Tasks Content here...</div>
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="bg-amber-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
+                        <i class="fas fa-ad"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold">Interstitial Ad Task</p>
+                        <p class="text-xs text-slate-400">Watch and earn instant coins</p>
+                    </div>
+                </div>
+                <button onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">View Task Ad (+coin0.20)</button>
+            </div>
         </div>
 
         <div id="page-invite" class="page hidden p-4">
@@ -179,7 +190,7 @@
                     return;
                 }
                 
-                const adController = window.Adsgram.init({ blockId: "39352" });
+                const adController = window.Adsgram.init({ blockId: "int-39419" });
                 
                 await adController.show();
 
@@ -194,6 +205,35 @@
 
                 alert("Ad completed! coin0.20 added.");
                 startAdTimer(10);
+                startApp();
+
+            } catch (e) {
+                console.log("Ad error or skipped", e);
+                alert("Ad was closed or not completed.");
+            }
+        }
+
+        async function watchTaskAd() {
+            try {
+                if (!window.Adsgram) {
+                    alert("Adsgram script not loaded yet!");
+                    return;
+                }
+                
+                const adController = window.Adsgram.init({ blockId: "int-39419" });
+                
+                await adController.show();
+
+                const user = tg.initDataUnsafe.user;
+                if (user) {
+                    const userRef = db.collection('users').doc(user.id.toString());
+                    await userRef.update({
+                        balance: firebase.firestore.FieldValue.increment(0.20),
+                        totalWatched: firebase.firestore.FieldValue.increment(1)
+                    });
+                }
+
+                alert("Task Ad completed! coin0.20 added.");
                 startApp();
 
             } catch (e) {
