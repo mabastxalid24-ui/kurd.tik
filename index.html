@@ -39,7 +39,7 @@
                             <p class="text-xs text-slate-400">Complete video to earn instantly</p>
                         </div>
                     </div>
-                    <button onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold">+coin0.20</button>
+                    <button id="adButton" onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">+coin0.20</button>
                 </div>
             </div>
             <div class="mt-3 px-1">
@@ -47,8 +47,7 @@
                     <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
                 </div>
                 <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-                <span class="text-[10px] text-slate-400 font-bold uppercase">Daily Limit</span>
-                <span id="ad-counter-text" class="text-xs font-bold text-slate-600">0 / 15 today</span>
+                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next ad in: <span id="countdown">10</span>s</span>
             </div>
 
             <!-- بەشی یارییەکان -->
@@ -66,14 +65,13 @@
             </div>
         </div> 
 
-        <!-- پەڕەی لیستکردنی یارییەکان (دوگمەی داخستن הוوە پێشەوە بۆ ئەوەی هەمیشە دیار بێت) -->
+        <!-- پەڕەی لیستکردنی یارییەکان -->
         <div id="page-games-list" class="page hidden p-2">
             <div class="flex items-center justify-between mb-3 px-2">
                 <h3 class="font-bold text-lg" id="game-zone-title">Game Zone</h3>
                 <button onclick="showPage('ads')" id="back-home-btn" class="text-sm text-blue-600 font-bold">Back Home</button>
             </div>
             
-            <!-- دوگمەی داخستنی یاری کە ئێستا لە سەرەوە دانراوە بۆ ئەوەی هەرگیز ون نەبێت -->
             <div id="game-container" class="hidden mb-3">
                 <button onclick="closeGame()" class="w-full mb-2 bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2">
                     <i class="fas fa-times-circle"></i> CLOSE GAME
@@ -119,7 +117,6 @@
             <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
         </div>
     </div>
-
 
     <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
         <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
@@ -176,104 +173,60 @@
         }
 
         async function watchAd() {
-    try {
-        if (!window.Adsgram) {
-            alert("Adsgram script not loaded yet!");
-            return;
-        }
-        
-        const adController = window.Adsgram.init({ blockId: "39352" });
-        
-        // پیشاندانی ڕیکلامی ئەدزگرام و چاوەڕێکردنی تەواوبوونی
-        const result = await adController.show();
+            try {
+                if (!window.Adsgram) {
+                    alert("Adsgram script not loaded yet!");
+                    return;
+                }
+                
+                const adController = window.Adsgram.init({ blockId: "39352" });
+                
+                await adController.show();
 
-        // لێرە پاش تەواوبوونی ڕیکلامەکە، باڵانسەکە لەسەر ئەپەکە زیاد دەکەین
-        // (دەتوانیت لێرە کۆدی زیادکردنی کۆین یان پارە بۆ فایەربەیس یان LocalStorage دابنێیت)
-        
-        // قفڵکردنی دوگمە و دەستپێکردنی تایمەری ١٠ چرکە
-        startAdTimer(10);
-
-    } catch (e) {
-        console.log("Ad error:", e);
-    }
-}
-
-function startAdTimer(seconds) {
-    const btn = document.getElementById('adButton');
-    const timerText = document.getElementById('timerText');
-    const countdownSpan = document.getElementById('countdown');
-    
-    if(!btn) return;
-    
-    btn.disabled = true;
-    btn.classList.add('opacity-50', 'cursor-not-allowed');
-    if(timerText) timerText.classList.remove('hidden');
-
-    let timeLeft = seconds;
-    if(countdownSpan) countdownSpan.textContent = timeLeft;
-
-    let timer = setInterval(function() {
-        timeLeft--;
-        if(countdownSpan) countdownSpan.textContent = timeLeft;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            if(timerText) timerText.classList.add('hidden');
-        }
-    }, 1000);
-}
-
-}
-
-function startAdTimer(seconds) {
-    const btn = document.getElementById('adButton');
-    const timerText = document.getElementById('timerText');
-    const countdownSpan = document.getElementById('countdown');
-    
-    if(!btn) return;
-    
-    btn.disabled = true;
-    btn.classList.add('opacity-50', 'cursor-not-allowed');
-    if(timerText) timerText.classList.remove('hidden');
-
-    let timeLeft = seconds;
-    if(countdownSpan) countdownSpan.textContent = timeLeft;
-
-    let timer = setInterval(function() {
-        timeLeft--;
-        if(countdownSpan) countdownSpan.textContent = timeLeft;
-        
-        if (timeLeft <= 0) {
-            clearInterval(timer);
-            btn.disabled = false;
-            btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            if(timerText) timerText.classList.add('hidden');
-        }
-    }, 1000);
-}
-
-
-                adController.show()
-                    .then(async (result) => {
-                        await userRef.update({
-                            balance: firebase.firestore.FieldValue.increment(0.20),
-                            totalWatched: firebase.firestore.FieldValue.increment(1),
-                            dailyAdsCount: dailyCount + 1,
-                            lastAdDate: firebase.firestore.FieldValue.serverTimestamp()
-                        });
-
-                        alert("Ad completed! coin0.20 added.");
-                        location.reload();
-                    })
-                    .catch((err) => {
-                        console.log("Ad error or skipped", err);
-                        alert("Ad was closed or not completed.");
+                const user = tg.initDataUnsafe.user;
+                if (user) {
+                    const userRef = db.collection('users').doc(user.id.toString());
+                    await userRef.update({
+                        balance: firebase.firestore.FieldValue.increment(0.20),
+                        totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
+                }
+
+                alert("Ad completed! coin0.20 added.");
+                startAdTimer(10);
+                startApp();
+
             } catch (e) {
-                console.error("Ad error:", e);
+                console.log("Ad error or skipped", e);
+                alert("Ad was closed or not completed.");
             }
+        }
+
+        function startAdTimer(seconds) {
+            const btn = document.getElementById('adButton');
+            const timerText = document.getElementById('timerText');
+            const countdownSpan = document.getElementById('countdown');
+            
+            if(!btn) return;
+            
+            btn.disabled = true;
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+            if(timerText) timerText.classList.remove('hidden');
+
+            let timeLeft = seconds;
+            if(countdownSpan) countdownSpan.textContent = timeLeft;
+
+            let timer = setInterval(function() {
+                timeLeft--;
+                if(countdownSpan) countdownSpan.textContent = timeLeft;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    btn.disabled = false;
+                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    if(timerText) timerText.classList.add('hidden');
+                }
+            }, 1000);
         }
 
         async function startApp() {
