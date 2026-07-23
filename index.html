@@ -184,15 +184,47 @@
         
         const adController = window.Adsgram.init({ blockId: "39352" });
         
-        // پیشاندانی ڕیکلامی ئەدزگرام
-        await adController.show();
+        // پیشاندانی ڕیکلامی ئەدزگرام و چاوەڕێکردنی تەواوبوونی
+        const result = await adController.show();
 
+        // لێرە پاش تەواوبوونی ڕیکلامەکە، باڵانسەکە لەسەر ئەپەکە زیاد دەکەین
+        // (دەتوانیت لێرە کۆدی زیادکردنی کۆین یان پارە بۆ فایەربەیس یان LocalStorage دابنێیت)
+        
         // قفڵکردنی دوگمە و دەستپێکردنی تایمەری ١٠ چرکە
         startAdTimer(10);
 
     } catch (e) {
         console.log("Ad error:", e);
     }
+}
+
+function startAdTimer(seconds) {
+    const btn = document.getElementById('adButton');
+    const timerText = document.getElementById('timerText');
+    const countdownSpan = document.getElementById('countdown');
+    
+    if(!btn) return;
+    
+    btn.disabled = true;
+    btn.classList.add('opacity-50', 'cursor-not-allowed');
+    if(timerText) timerText.classList.remove('hidden');
+
+    let timeLeft = seconds;
+    if(countdownSpan) countdownSpan.textContent = timeLeft;
+
+    let timer = setInterval(function() {
+        timeLeft--;
+        if(countdownSpan) countdownSpan.textContent = timeLeft;
+        
+        if (timeLeft <= 0) {
+            clearInterval(timer);
+            btn.disabled = false;
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            if(timerText) timerText.classList.add('hidden');
+        }
+    }, 1000);
+}
+
 }
 
 function startAdTimer(seconds) {
