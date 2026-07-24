@@ -47,7 +47,7 @@
                     <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
                 </div>
                 <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next ad in: <span id="countdown">150</span>s</span>
+                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next ad in: <span id="countdown">36000</span>s</span>
             </div>
 
             <!-- بەشی یارییەکان -->
@@ -104,10 +104,10 @@
                     </div>
                 </div>
                 <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">View Task Ad (+coin0.50)</button>
-                <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">3000</span>s</span>
+                <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">36000</span>s</span>
             </div>
 
-            <!-- دوگمەی Ad Rewards کە پێویستی بە ٥ کلیک هەیە پێش دەستپێکردنی تایمەر -->
+            <!-- دوگمەی Ad Rewards کە پێویستی بە ٢٥ کلیک هەیە پێش دەستپێکردنی تایمەر -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -115,14 +115,14 @@
                     </div>
                     <div>
                         <p class="font-bold">Ad Rewards</p>
-                        <p class="text-xs text-slate-400">Click 5 times to activate timer</p>
+                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                     </div>
                 </div>
-                <button id="smartLinkBtn" onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold transition duration-200">Ad Rewards (<span id="clickCountDisplay">0</span>/5)</button>
-                <span id="smartLinkTimerText" class="text-xs font-bold text-orange-500 hidden mt-2 block">Next click in: <span id="smartLinkCountdown">3000</span>s</span>
+                <button id="smartLinkBtn" onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold transition duration-200">Ad Rewards (<span id="clickCountDisplay">0</span>/25)</button>
+                <span id="smartLinkTimerText" class="text-xs font-bold text-orange-500 hidden mt-2 block">Next click in: <span id="smartLinkCountdown">36000</span>s</span>
             </div>
 
-            <!-- دوگمەی یەکەمی Kurdtik بۆ بەشی تاسک -->
+            <!-- دوگمەی یەکەمی Kurdtik بۆ بەشی تاسک (٢٥ کلیک و ١٠ سەعات تایمەر) -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-indigo-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -130,14 +130,14 @@
                     </div>
                     <div>
                         <p class="font-bold">Kurdtik Task 1</p>
-                        <p class="text-xs text-slate-400">Visit link & wait timer</p>
+                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                     </div>
                 </div>
-                <button id="kurdtikBtn1" onclick="openKurdtikLink1()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 1</button>
-                <span id="kurdtikTimerText1" class="text-xs font-bold text-indigo-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown1">3000</span>s</span>
+                <button id="kurdtikBtn1" onclick="openKurdtikLink1()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 1 (<span id="clickCountDisplay1">0</span>/25)</button>
+                <span id="kurdtikTimerText1" class="text-xs font-bold text-indigo-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown1">36000</span>s</span>
             </div>
 
-            <!-- دوگمەی دووەمی Kurdtik بۆ بەشی تاسک -->
+            <!-- دوگمەی دووەمی Kurdtik بۆ بەشی تاسک (٢٥ کلیک و ١٠ سەعات تایمەر) -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-purple-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -145,11 +145,11 @@
                     </div>
                     <div>
                         <p class="font-bold">Kurdtik Task 2</p>
-                        <p class="text-xs text-slate-400">Visit link & wait timer</p>
+                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                     </div>
                 </div>
-                <button id="kurdtikBtn2" onclick="openKurdtikLink2()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 2</button>
-                <span id="kurdtikTimerText2" class="text-xs font-bold text-purple-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown2">3000</span>s</span>
+                <button id="kurdtikBtn2" onclick="openKurdtikLink2()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 2 (<span id="clickCountDisplay2">0</span>/25)</button>
+                <span id="kurdtikTimerText2" class="text-xs font-bold text-purple-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown2">36000</span>s</span>
             </div>
         </div>
 
@@ -199,79 +199,66 @@
         window.addEventListener('DOMContentLoaded', () => {
             checkSavedTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
             checkSavedTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
-            checkSavedTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1');
-            checkSavedTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2');
             
-            // پشکنینی کلیکەکانی سمارت لینک
-            checkSmartLinkState();
+            // پشکنینی دۆخی کلیک و تایمەری دوگمەکان
+            checkClickButtonState('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'Ad Rewards');
+            checkClickButtonState('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1', 'Visit Kurdtik 1');
+            checkClickButtonState('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2', 'Visit Kurdtik 2');
         });
 
-        function checkSmartLinkState() {
-            const endTime = localStorage.getItem('smart_link_end');
+        function checkClickButtonState(btnId, textId, spanId, storageKey, clicksKey, displayId, baseText) {
+            const endTime = localStorage.getItem(storageKey);
             if (endTime) {
                 const timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 if (timeLeft > 0) {
-                    startCustomTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end');
+                    startCustomTimer(btnId, textId, spanId, storageKey);
                     return;
                 } else {
-                    localStorage.removeItem('smart_link_end');
+                    localStorage.removeItem(storageKey);
                 }
             }
             
-            // نیشاندانی ژمارەی کلیکەکان ئەگەر تایمەر نەبوو
-            let clicks = parseInt(localStorage.getItem('smart_link_clicks') || '0');
-            const btnText = document.getElementById('clickCountDisplay');
-            if (btnText) btnText.innerText = clicks;
+            let clicks = parseInt(localStorage.getItem(clicksKey) || '0');
+            const countSpan = document.getElementById(displayId);
+            if (countSpan) countSpan.innerText = clicks;
+        }
+
+        function handleMultiClickButton(url, storageKey, clicksKey, displayId, btnId, textId, spanId, baseText) {
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                window.Telegram.WebApp.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+
+            let clicks = parseInt(localStorage.getItem(clicksKey) || '0');
+            clicks++;
+            
+            if (clicks >= 25) {
+                localStorage.setItem(clicksKey, '0');
+                // ١٠ سەعات = 36000 چرکە (36000 * 1000 مڵیسکۆند)
+                const endTime = Date.now() + (36000 * 1000);
+                localStorage.setItem(storageKey, endTime);
+                startCustomTimer(btnId, textId, spanId, storageKey);
+            } else {
+                localStorage.setItem(clicksKey, clicks);
+                const countSpan = document.getElementById(displayId);
+                if (countSpan) countSpan.innerText = clicks;
+            }
         }
 
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(smartUrl);
-            } else {
-                window.open(smartUrl, '_blank');
-            }
-
-            // زیادکردنی ژمارەی کلیک بە 1
-            let clicks = parseInt(localStorage.getItem('smart_link_clicks') || '0');
-            clicks++;
-            
-            if (clicks >= 5) {
-                // ئەگەر گەیشتە ٥ جار، کلیکەکان سفر بکەرەوە و تایمەری ٣٠٠٠ چرکە دەست پێبکە
-                localStorage.setItem('smart_link_clicks', '0');
-                const endTime = Date.now() + (3000 * 1000);
-                localStorage.setItem('smart_link_end', endTime);
-                startCustomTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end');
-            } else {
-                // هێشتا نەگەیشتووە بە ٥ جار، تەنها ژمارەکە پاشەکەوت بکە و پیشانی بدە
-                localStorage.setItem('smart_link_clicks', clicks);
-                const btnText = document.getElementById('clickCountDisplay');
-                if (btnText) btnText.innerText = clicks;
-            }
+            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'Ad Rewards');
         }
 
         function openKurdtikLink1() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(kurdtikUrl);
-            } else {
-                window.open(kurdtikUrl, '_blank');
-            }
-            const endTime = Date.now() + (3000 * 1000);
-            localStorage.setItem('kurdtik_end_1', endTime);
-            startCustomTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1', 'kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'Visit Kurdtik 1');
         }
 
         function openKurdtikLink2() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(kurdtikUrl);
-            } else {
-                window.open(kurdtikUrl, '_blank');
-            }
-            const endTime = Date.now() + (3000 * 1000);
-            localStorage.setItem('kurdtik_end_2', endTime);
-            startCustomTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2', 'kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'Visit Kurdtik 2');
         }
 
         function copyLink() {
@@ -328,7 +315,8 @@
                 }
 
                 alert("Ad completed! coin0.50 added.");
-                const endTime = Date.now() + (3000 * 1000);
+                // ١٠ سەعات = 36000 چرکە
+                const endTime = Date.now() + (36000 * 1000);
                 localStorage.setItem('main_ad_end', endTime);
                 startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
                 startApp();
@@ -360,7 +348,8 @@
                 }
 
                 alert("Task Ad completed! coin0.50 added.");
-                const endTime = Date.now() + (3000 * 1000);
+                // ١٠ سەعات = 36000 چرکە
+                const endTime = Date.now() + (36000 * 1000);
                 localStorage.setItem('task_ad_end', endTime);
                 startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
                 startApp();
@@ -397,9 +386,14 @@
                     if(timerText) timerText.classList.add('hidden');
                     localStorage.removeItem(storageKey);
                     
-                    // ئەگەر سمارت لینک بوو، ژمارەی کلیکەکان لەسەر نیشان بدەرەوە
                     if(btnId === 'smartLinkBtn') {
                         let btnText = document.getElementById('clickCountDisplay');
+                        if (btnText) btnText.innerText = '0';
+                    } else if(btnId === 'kurdtikBtn1') {
+                        let btnText = document.getElementById('clickCountDisplay1');
+                        if (btnText) btnText.innerText = '0';
+                    } else if(btnId === 'kurdtikBtn2') {
+                        let btnText = document.getElementById('clickCountDisplay2');
                         if (btnText) btnText.innerText = '0';
                     }
                 } else {
