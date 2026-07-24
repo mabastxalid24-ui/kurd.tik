@@ -196,82 +196,107 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        window.addEventListener('DOMContentLoaded', () => {
-            checkSavedTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
-            checkSavedTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
-            checkSavedTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1');
-            checkSavedTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2');
+        let activeTimers = {};
+
+        window.addEventListener('DOMContentLoaded', async () => {
+            await startApp();
             
-            // پشکنینی کلیکەکانی سمارت لینک
-            checkSmartLinkState();
+            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'total-watched-number');
+            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null);
+            checkFirebaseTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay');
+            checkFirebaseTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', null);
+            checkFirebaseTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', null);
         });
 
-        function checkSmartLinkState() {
-            const endTime = localStorage.getItem('smart_link_end');
-            if (endTime) {
-                const timeLeft = Math.floor((endTime - Date.now()) / 1000);
-                if (timeLeft > 0) {
-                    startCustomTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end');
-                    return;
-                } else {
-                    localStorage.removeItem('smart_link_end');
+        async function getUserId() {
+            return (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.id.toString() : "guest_user";
+        }
+
+        async function checkFirebaseTimer(btnId, textId, spanId, timeKey, clicksKey, displayId) {
+            const userId = await getUserId();
+            const btn = document.getElementById(btnId);
+            const userRef = db.collection('users').doc(userId);
+            const doc = await userRef.get();
+            
+            if (doc.exists) {
+                const data = doc.data();
+                const endTime = data[timeKey];
+                const clicks = data[clicksKey] || 0;
+
+                if (displayId) {
+                    const countSpan = document.getElementById(displayId);
+                    if (countSpan && displayId === 'clickCountDisplay') countSpan.innerText = clicks;
+                }
+
+                if (endTime) {
+                    const timeLeft = Math.floor((endTime - Date.now()) / 1000);
+                    if (timeLeft > 0) {
+                        startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime);
+                        return;
+                    } else {
+                        await userRef.update({ [timeKey]: firebase.firestore.FieldValue.delete() });
+                    }
                 }
             }
             
-            // نیشاندانی ژمارەی کلیکەکان ئەگەر تایمەر نەبوو
-            let clicks = parseInt(localStorage.getItem('smart_link_clicks') || '0');
-            const btnText = document.getElementById('clickCountDisplay');
-            if (btnText) btnText.innerText = clicks;
+            if(btn) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+        }
+
+        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 1) {
+            const userId = await getUserId();
+            const userRef = db.collection('users').doc(userId);
+            const doc = await userRef.get();
+            
+            if (doc.exists && doc.data()[timeKey]) {
+                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 1000);
+                if (timeLeft > 0) return;
+            }
+
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                window.Telegram.WebApp.openLink(url);
+            } else {
+                window.open(url, '_blank');
+            }
+
+            let clicks = (doc.exists && doc.data()[clicksKey]) ? doc.data()[clicksKey] : 0;
+            clicks++;
+            
+            if (clicks >= targetClicks) {
+                const newEndTime = Date.now() + (3000 * 1000);
+                await userRef.update({
+                    [clicksKey]: 0,
+                    [timeKey]: newEndTime
+                });
+                if (displayId) {
+                    const countSpan = document.getElementById(displayId);
+                    if (countSpan) countSpan.innerText = '0';
+                }
+                startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, newEndTime);
+            } else {
+                await userRef.update({ [clicksKey]: clicks });
+                if (displayId) {
+                    const countSpan = document.getElementById(displayId);
+                    if (countSpan) countSpan.innerText = clicks;
+                }
+            }
         }
 
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(smartUrl);
-            } else {
-                window.open(smartUrl, '_blank');
-            }
-
-            // زیادکردنی ژمارەی کلیک بە 1
-            let clicks = parseInt(localStorage.getItem('smart_link_clicks') || '0');
-            clicks++;
-            
-            if (clicks >= 5) {
-                // ئەگەر گەیشتە ٥ جار، کلیکەکان سفر بکەرەوە و تایمەری ٣٠٠٠ چرکە دەست پێبکە
-                localStorage.setItem('smart_link_clicks', '0');
-                const endTime = Date.now() + (3000 * 1000);
-                localStorage.setItem('smart_link_end', endTime);
-                startCustomTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end');
-            } else {
-                // هێشتا نەگەیشتووە بە ٥ جار، تەنها ژمارەکە پاشەکەوت بکە و پیشانی بدە
-                localStorage.setItem('smart_link_clicks', clicks);
-                const btnText = document.getElementById('clickCountDisplay');
-                if (btnText) btnText.innerText = clicks;
-            }
+            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 5);
         }
 
         function openKurdtikLink1() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(kurdtikUrl);
-            } else {
-                window.open(kurdtikUrl, '_blank');
-            }
-            const endTime = Date.now() + (3000 * 1000);
-            localStorage.setItem('kurdtik_end_1', endTime);
-            startCustomTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_1', 'kurdtik_clicks_1', null, 'kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 1);
         }
 
         function openKurdtikLink2() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(kurdtikUrl);
-            } else {
-                window.open(kurdtikUrl, '_blank');
-            }
-            const endTime = Date.now() + (3000 * 1000);
-            localStorage.setItem('kurdtik_end_2', endTime);
-            startCustomTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_2', 'kurdtik_clicks_2', null, 'kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 1);
         }
 
         function copyLink() {
@@ -315,22 +340,19 @@
                 }
                 
                 const adController = window.Adsgram.init({ blockId: "39352" });
-                
                 await adController.show();
 
-                const user = tg.initDataUnsafe.user;
-                if (user) {
-                    const userRef = db.collection('users').doc(user.id.toString());
-                    await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.50),
-                        totalWatched: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
+                const userId = await getUserId();
+                const userRef = db.collection('users').doc(userId);
+                await userRef.update({
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
+                });
 
                 alert("Ad completed! coin0.50 added.");
-                const endTime = Date.now() + (3000 * 1000);
-                localStorage.setItem('main_ad_end', endTime);
-                startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
+                const newEndTime = Date.now() + (3000 * 1000);
+                await userRef.update({ main_ad_end: newEndTime });
+                startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', null, newEndTime);
                 startApp();
 
             } catch (e) {
@@ -347,22 +369,19 @@
                 }
                 
                 const adController = window.Adsgram.init({ blockId: "int-39419" });
-                
                 await adController.show();
 
-                const user = tg.initDataUnsafe.user;
-                if (user) {
-                    const userRef = db.collection('users').doc(user.id.toString());
-                    await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.50),
-                        totalWatched: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
+                const userId = await getUserId();
+                const userRef = db.collection('users').doc(userId);
+                await userRef.update({
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
+                });
 
                 alert("Task Ad completed! coin0.50 added.");
-                const endTime = Date.now() + (3000 * 1000);
-                localStorage.setItem('task_ad_end', endTime);
-                startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
+                const newEndTime = Date.now() + (3000 * 1000);
+                await userRef.update({ task_ad_end: newEndTime });
+                startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null, newEndTime);
                 startApp();
 
             } catch (e) {
@@ -371,7 +390,7 @@
             }
         }
 
-        function startCustomTimer(btnId, textId, spanId, storageKey) {
+        function startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime) {
             const btn = document.getElementById(btnId);
             const timerText = document.getElementById(textId);
             const countdownSpan = document.getElementById(spanId);
@@ -382,42 +401,31 @@
             btn.classList.add('opacity-50', 'cursor-not-allowed');
             if(timerText) timerText.classList.remove('hidden');
 
-            let timer = setInterval(function() {
-                let endTime = localStorage.getItem(storageKey);
-                if (!endTime) {
-                    clearInterval(timer);
-                    return;
-                }
+            if (activeTimers[btnId]) clearInterval(activeTimers[btnId]);
+
+            activeTimers[btnId] = setInterval(async function() {
                 let timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 
                 if (timeLeft <= 0) {
-                    clearInterval(timer);
+                    clearInterval(activeTimers[btnId]);
                     btn.disabled = false;
                     btn.classList.remove('opacity-50', 'cursor-not-allowed');
                     if(timerText) timerText.classList.add('hidden');
-                    localStorage.removeItem(storageKey);
                     
-                    // ئەگەر سمارت لینک بوو، ژمارەی کلیکەکان لەسەر نیشان بدەرەوە
-                    if(btnId === 'smartLinkBtn') {
-                        let btnText = document.getElementById('clickCountDisplay');
-                        if (btnText) btnText.innerText = '0';
+                    const userId = await getUserId();
+                    await db.collection('users').doc(userId).update({
+                        [timeKey]: firebase.firestore.FieldValue.delete(),
+                        [clicksKey]: 0
+                    });
+                    
+                    if (displayId) {
+                        let countSpan = document.getElementById(displayId);
+                        if (countSpan && displayId === 'clickCountDisplay') countSpan.innerText = '0';
                     }
                 } else {
                     if(countdownSpan) countdownSpan.textContent = timeLeft;
                 }
             }, 1000);
-        }
-
-        function checkSavedTimer(btnId, textId, spanId, storageKey) {
-            const endTime = localStorage.getItem(storageKey);
-            if (endTime) {
-                const timeLeft = Math.floor((endTime - Date.now()) / 1000);
-                if (timeLeft > 0) {
-                    startCustomTimer(btnId, textId, spanId, storageKey);
-                } else {
-                    localStorage.removeItem(storageKey);
-                }
-            }
         }
 
         async function startApp() {
@@ -455,8 +463,6 @@
                 document.getElementById('main-app').classList.remove('hidden');
             }
         }
-        
-        startApp();
     </script>
 </body>
 </html>
