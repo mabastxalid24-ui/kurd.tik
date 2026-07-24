@@ -194,6 +194,12 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
+        // پشکنینی کاتی پاشەکەوتکراو لە کاتی کردنەوەی ئەپەکەدا
+        window.addEventListener('DOMContentLoaded', () => {
+            checkSavedTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1');
+            checkSavedTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2');
+        });
+
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
@@ -203,7 +209,7 @@
             }
         }
 
-        // فەنکشنی کردنەوەی دوگمەی یەکەمی Kurdtik و پێدانی کاتی ٣٠٠٠ چرکە
+        // فەنکشنی کردنەوەی دوگمەی یەکەمی Kurdtik و پاشەکەوتکردنی کاتەکە
         function openKurdtikLink1() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
@@ -211,10 +217,12 @@
             } else {
                 window.open(kurdtikUrl, '_blank');
             }
-            startKurdtikTimer1(3000);
+            const endTime = Date.now() + (3000 * 1000);
+            localStorage.setItem('kurdtik_end_1', endTime);
+            startKurdtikTimer1();
         }
 
-        // فەنکشنی کردنەوەی دوگمەی دووەمی Kurdtik و پێدانی کاتی ٣٠٠٠ چرکە
+        // فەنکشنی کردنەوەی دوگمەی دووەمی Kurdtik و پاشەکەوتکردنی کاتەکە
         function openKurdtikLink2() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
@@ -222,7 +230,9 @@
             } else {
                 window.open(kurdtikUrl, '_blank');
             }
-            startKurdtikTimer2(3000);
+            const endTime = Date.now() + (3000 * 1000);
+            localStorage.setItem('kurdtik_end_2', endTime);
+            startKurdtikTimer2();
         }
 
         function copyLink() {
@@ -344,7 +354,7 @@
             }, 1000);
         }
 
-        function startKurdtikTimer1(seconds) {
+        function startKurdtikTimer1() {
             const btn = document.getElementById('kurdtikBtn1');
             const timerText = document.getElementById('kurdtikTimerText1');
             const countdownSpan = document.getElementById('kurdtikCountdown1');
@@ -355,23 +365,27 @@
             btn.classList.add('opacity-50', 'cursor-not-allowed');
             if(timerText) timerText.classList.remove('hidden');
 
-            let timeLeft = seconds;
-            if(countdownSpan) countdownSpan.textContent = timeLeft;
-
             let timer = setInterval(function() {
-                timeLeft--;
-                if(countdownSpan) countdownSpan.textContent = timeLeft;
+                let endTime = localStorage.getItem('kurdtik_end_1');
+                if (!endTime) {
+                    clearInterval(timer);
+                    return;
+                }
+                let timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     btn.disabled = false;
                     btn.classList.remove('opacity-50', 'cursor-not-allowed');
                     if(timerText) timerText.classList.add('hidden');
+                    localStorage.removeItem('kurdtik_end_1');
+                } else {
+                    if(countdownSpan) countdownSpan.textContent = timeLeft;
                 }
             }, 1000);
         }
 
-        function startKurdtikTimer2(seconds) {
+        function startKurdtikTimer2() {
             const btn = document.getElementById('kurdtikBtn2');
             const timerText = document.getElementById('kurdtikTimerText2');
             const countdownSpan = document.getElementById('kurdtikCountdown2');
@@ -382,20 +396,40 @@
             btn.classList.add('opacity-50', 'cursor-not-allowed');
             if(timerText) timerText.classList.remove('hidden');
 
-            let timeLeft = seconds;
-            if(countdownSpan) countdownSpan.textContent = timeLeft;
-
             let timer = setInterval(function() {
-                timeLeft--;
-                if(countdownSpan) countdownSpan.textContent = timeLeft;
+                let endTime = localStorage.getItem('kurdtik_end_2');
+                if (!endTime) {
+                    clearInterval(timer);
+                    return;
+                }
+                let timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 
                 if (timeLeft <= 0) {
                     clearInterval(timer);
                     btn.disabled = false;
                     btn.classList.remove('opacity-50', 'cursor-not-allowed');
                     if(timerText) timerText.classList.add('hidden');
+                    localStorage.removeItem('kurdtik_end_2');
+                } else {
+                    if(countdownSpan) countdownSpan.textContent = timeLeft;
                 }
             }, 1000);
+        }
+
+        function checkSavedTimer(btnId, textId, spanId, storageKey) {
+            const endTime = localStorage.getItem(storageKey);
+            if (endTime) {
+                const timeLeft = Math.floor((endTime - Date.now()) / 1000);
+                if (timeLeft > 0) {
+                    if (storageKey === 'kurdtik_end_1') {
+                        startKurdtikTimer1();
+                    } else if (storageKey === 'kurdtik_end_2') {
+                        startKurdtikTimer2();
+                    }
+                } else {
+                    localStorage.removeItem(storageKey);
+                }
+            }
         }
 
         async function startApp() {
