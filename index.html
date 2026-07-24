@@ -222,7 +222,7 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.20),
+                        balance: firebase.firestore.FieldValue.increment(0.5),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
@@ -252,12 +252,12 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.20),
+                        balance: firebase.firestore.FieldValue.increment(0.5),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
 
-                alert("Task Ad completed! coin0.20 added.");
+                alert("Task Ad completed! coin0.5 added.");
                 startApp();
 
             } catch (e) {
