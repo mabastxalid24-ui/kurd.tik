@@ -28,7 +28,7 @@
         <div id="page-ads" class="page">
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
                 <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
-                <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn coin0.50</p>
+                <p class="text-sm text-slate-500 mb-4">Complete and watch short video ads (25 clicks required)</p>
                 <div class="bg-slate-50 p-4 rounded-2xl border flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="bg-slate-900 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -36,10 +36,10 @@
                         </div>
                         <div>
                             <p class="font-bold">Watch Ad</p>
-                            <p class="text-xs text-slate-400">Complete video to earn instantly</p>
+                            <p class="text-xs text-slate-400">Complete video to earn</p>
                         </div>
                     </div>
-                    <button id="adButton" onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">+coin0.50</button>
+                    <button id="adButton" onclick="handleAdClickWithCounter('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'mainClickCountDisplay', 'Watch Ad', watchAd)" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">Watch Ad (<span id="mainClickCountDisplay">0</span>/25)</button>
                 </div>
             </div>
             <div class="mt-3 px-1">
@@ -47,7 +47,7 @@
                     <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
                 </div>
                 <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next ad in: <span id="countdown">36000</span>s</span>
+                <span id="timerText" class="text-xs font-bold text-amber-600 hidden mt-1 block">Next click in: <span id="countdown">36000</span>s</span>
             </div>
 
             <!-- بەشی یارییەکان -->
@@ -100,14 +100,14 @@
                     </div>
                     <div>
                         <p class="font-bold">Interstitial Ad Task</p>
-                        <p class="text-xs text-slate-400">Watch and earn instant coins</p>
+                        <p class="text-xs text-slate-400">Watch and earn instant coins (25 clicks)</p>
                     </div>
                 </div>
-                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">View Task Ad (+coin0.50)</button>
+                <button id="taskAdBtn" onclick="handleAdClickWithCounter('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', 'taskClickCountDisplay', 'View Task Ad', watchTaskAd)" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">View Task Ad (<span id="taskClickCountDisplay">0</span>/25)</button>
                 <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">36000</span>s</span>
             </div>
 
-            <!-- دوگمەی Ad Rewards کە پێویستی بە ٢٥ کلیک هەیە پێش دەستپێکردنی تایمەر -->
+            <!-- دوگمەی Ad Rewards کە پێویستی بە ٢٥ کلیک هەیە -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -197,21 +197,21 @@
         tg.ready();
 
         window.addEventListener('DOMContentLoaded', () => {
-            checkSavedTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
-            checkSavedTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
-            
-            // پشکنینی دۆخی کلیک و تایمەری دوگمەکان
-            checkClickButtonState('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'Ad Rewards');
-            checkClickButtonState('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1', 'Visit Kurdtik 1');
-            checkClickButtonState('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2', 'Visit Kurdtik 2');
+            checkClickButtonState('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'mainClickCountDisplay');
+            checkClickButtonState('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', 'taskClickCountDisplay');
+            checkClickButtonState('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay');
+            checkClickButtonState('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1');
+            checkClickButtonState('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2');
         });
 
-        function checkClickButtonState(btnId, textId, spanId, storageKey, clicksKey, displayId, baseText) {
+        function checkClickButtonState(btnId, textId, spanId, storageKey, clicksKey, displayId) {
+            const btn = document.getElementById(btnId);
             const endTime = localStorage.getItem(storageKey);
+            
             if (endTime) {
                 const timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 if (timeLeft > 0) {
-                    startCustomTimer(btnId, textId, spanId, storageKey);
+                    startCustomTimer(btnId, textId, spanId, storageKey, clicksKey, displayId);
                     return;
                 } else {
                     localStorage.removeItem(storageKey);
@@ -221,9 +221,19 @@
             let clicks = parseInt(localStorage.getItem(clicksKey) || '0');
             const countSpan = document.getElementById(displayId);
             if (countSpan) countSpan.innerText = clicks;
+            
+            if(btn) {
+                btn.disabled = false;
+                btn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
         }
 
-        function handleMultiClickButton(url, storageKey, clicksKey, displayId, btnId, textId, spanId, baseText) {
+        function handleMultiClickButton(url, storageKey, clicksKey, displayId, btnId, textId, spanId) {
+            let endTime = localStorage.getItem(storageKey);
+            if (endTime && Math.floor((endTime - Date.now()) / 1000) > 0) {
+                return;
+            }
+
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
                 window.Telegram.WebApp.openLink(url);
             } else {
@@ -235,10 +245,9 @@
             
             if (clicks >= 25) {
                 localStorage.setItem(clicksKey, '0');
-                // ١٠ سەعات = 36000 چرکە (36000 * 1000 مڵیسکۆند)
-                const endTime = Date.now() + (36000 * 1000);
-                localStorage.setItem(storageKey, endTime);
-                startCustomTimer(btnId, textId, spanId, storageKey);
+                const newEndTime = Date.now() + (36000 * 1000); // ١٠ سەعات
+                localStorage.setItem(storageKey, newEndTime);
+                startCustomTimer(btnId, textId, spanId, storageKey, clicksKey, displayId);
             } else {
                 localStorage.setItem(clicksKey, clicks);
                 const countSpan = document.getElementById(displayId);
@@ -246,19 +255,46 @@
             }
         }
 
+        async function handleAdClickWithCounter(btnId, textId, spanId, storageKey, clicksKey, displayId, baseText, adFunction) {
+            let endTime = localStorage.getItem(storageKey);
+            if (endTime && Math.floor((endTime - Date.now()) / 1000) > 0) {
+                return;
+            }
+
+            try {
+                await adFunction();
+
+                let clicks = parseInt(localStorage.getItem(clicksKey) || '0');
+                clicks++;
+                
+                if (clicks >= 25) {
+                    localStorage.setItem(clicksKey, '0');
+                    const newEndTime = Date.now() + (36000 * 1000);
+                    localStorage.setItem(storageKey, newEndTime);
+                    startCustomTimer(btnId, textId, spanId, storageKey, clicksKey, displayId);
+                } else {
+                    localStorage.setItem(clicksKey, clicks);
+                    const countSpan = document.getElementById(displayId);
+                    if (countSpan) countSpan.innerText = clicks;
+                }
+            } catch (e) {
+                console.log("Ad error or skipped", e);
+            }
+        }
+
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
-            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'Ad Rewards');
+            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown');
         }
 
         function openKurdtikLink1() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1', 'kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'Visit Kurdtik 1');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_1', 'kurdtik_clicks_1', 'clickCountDisplay1', 'kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1');
         }
 
         function openKurdtikLink2() {
             const kurdtikUrl = "https://kurdtik.vercel.app/";
-            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2', 'kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'Visit Kurdtik 2');
+            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_2', 'kurdtik_clicks_2', 'clickCountDisplay2', 'kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2');
         }
 
         function copyLink() {
@@ -295,72 +331,48 @@
         }
 
         async function watchAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                
-                const adController = window.Adsgram.init({ blockId: "39352" });
-                
-                await adController.show();
-
-                const user = tg.initDataUnsafe.user;
-                if (user) {
-                    const userRef = db.collection('users').doc(user.id.toString());
-                    await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.50),
-                        totalWatched: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
-
-                alert("Ad completed! coin0.50 added.");
-                // ١٠ سەعات = 36000 چرکە
-                const endTime = Date.now() + (36000 * 1000);
-                localStorage.setItem('main_ad_end', endTime);
-                startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end');
-                startApp();
-
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                alert("Ad was closed or not completed.");
+            if (!window.Adsgram) {
+                alert("Adsgram script not loaded yet!");
+                throw new Error("Adsgram not loaded");
             }
+            
+            const adController = window.Adsgram.init({ blockId: "39352" });
+            await adController.show();
+
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                const userRef = db.collection('users').doc(user.id.toString());
+                await userRef.update({
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
+                });
+            }
+            alert("Ad completed! coin0.50 added.");
+            startApp();
         }
 
         async function watchTaskAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                
-                const adController = window.Adsgram.init({ blockId: "int-39419" });
-                
-                await adController.show();
-
-                const user = tg.initDataUnsafe.user;
-                if (user) {
-                    const userRef = db.collection('users').doc(user.id.toString());
-                    await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.50),
-                        totalWatched: firebase.firestore.FieldValue.increment(1)
-                    });
-                }
-
-                alert("Task Ad completed! coin0.50 added.");
-                // ١٠ سەعات = 36000 چرکە
-                const endTime = Date.now() + (36000 * 1000);
-                localStorage.setItem('task_ad_end', endTime);
-                startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end');
-                startApp();
-
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                alert("Ad was closed or not completed.");
+            if (!window.Adsgram) {
+                alert("Adsgram script not loaded yet!");
+                throw new Error("Adsgram not loaded");
             }
+            
+            const adController = window.Adsgram.init({ blockId: "int-39419" });
+            await adController.show();
+
+            const user = tg.initDataUnsafe.user;
+            if (user) {
+                const userRef = db.collection('users').doc(user.id.toString());
+                await userRef.update({
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
+                });
+            }
+            alert("Task Ad completed! coin0.50 added.");
+            startApp();
         }
 
-        function startCustomTimer(btnId, textId, spanId, storageKey) {
+        function startCustomTimer(btnId, textId, spanId, storageKey, clicksKey, displayId) {
             const btn = document.getElementById(btnId);
             const timerText = document.getElementById(textId);
             const countdownSpan = document.getElementById(spanId);
@@ -386,32 +398,17 @@
                     if(timerText) timerText.classList.add('hidden');
                     localStorage.removeItem(storageKey);
                     
-                    if(btnId === 'smartLinkBtn') {
-                        let btnText = document.getElementById('clickCountDisplay');
-                        if (btnText) btnText.innerText = '0';
-                    } else if(btnId === 'kurdtikBtn1') {
-                        let btnText = document.getElementById('clickCountDisplay1');
-                        if (btnText) btnText.innerText = '0';
-                    } else if(btnId === 'kurdtikBtn2') {
-                        let btnText = document.getElementById('clickCountDisplay2');
-                        if (btnText) btnText.innerText = '0';
+                    if(clicksKey) {
+                        localStorage.setItem(clicksKey, '0');
+                    }
+                    if(displayId) {
+                        let countSpan = document.getElementById(displayId);
+                        if (countSpan) countSpan.innerText = '0';
                     }
                 } else {
                     if(countdownSpan) countdownSpan.textContent = timeLeft;
                 }
             }, 1000);
-        }
-
-        function checkSavedTimer(btnId, textId, spanId, storageKey) {
-            const endTime = localStorage.getItem(storageKey);
-            if (endTime) {
-                const timeLeft = Math.floor((endTime - Date.now()) / 1000);
-                if (timeLeft > 0) {
-                    startCustomTimer(btnId, textId, spanId, storageKey);
-                } else {
-                    localStorage.removeItem(storageKey);
-                }
-            }
         }
 
         async function startApp() {
