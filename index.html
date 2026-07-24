@@ -39,7 +39,7 @@
                             <p class="text-xs text-slate-400">Complete video to earn instantly</p>
                         </div>
                     </div>
-                    <button id="adButton" onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">+coin0.20</button>
+                    <button id="adButton" onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">+coin0.05</button>
                 </div>
             </div>
             <div class="mt-3 px-1">
@@ -103,10 +103,10 @@
                         <p class="text-xs text-slate-400">Watch and earn instant coins</p>
                     </div>
                 </div>
-                <button onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">View Task Ad (+coin0.20)</button>
+                <button onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">View Task Ad (+coin0.05)</button>
             </div>
 
-            <!-- دوگمەی نوێی Ad Rewards کە بەستراوەتەوە بە سمارت لینک -->
+            <!-- دوگمەی Ad Rewards کە بەستراوەتەوە بە سمارت لینک -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -164,7 +164,6 @@
         const tg = window.Telegram.WebApp;
         tg.ready();
 
-        // فەنکشنی کردنەوەی سمارت لینک لەناو مینی ئەپدا بە ڕێگەی تلگرام
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
             if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
@@ -222,12 +221,12 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.5),
+                        balance: firebase.firestore.FieldValue.increment(0.05),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
 
-                alert("Ad completed! coin0.5 added.");
+                alert("Ad completed! coin0.05 added.");
                 startAdTimer(10);
                 startApp();
 
@@ -252,12 +251,12 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.5),
+                        balance: firebase.firestore.FieldValue.increment(0.05),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
 
-                alert("Task Ad completed! coin0.5 added.");
+                alert("Task Ad completed! coin0.05 added.");
                 startApp();
 
             } catch (e) {
