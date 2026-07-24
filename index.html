@@ -221,12 +221,12 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.05),
+                        balance: firebase.firestore.FieldValue.increment(0.50),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
 
-                alert("Ad completed! coin0.05 added.");
+                alert("Ad completed! coin0.50 added.");
                 startAdTimer(10);
                 startApp();
 
@@ -251,7 +251,7 @@
                 if (user) {
                     const userRef = db.collection('users').doc(user.id.toString());
                     await userRef.update({
-                        balance: firebase.firestore.FieldValue.increment(0.05),
+                        balance: firebase.firestore.FieldValue.increment(0.50),
                         totalWatched: firebase.firestore.FieldValue.increment(1)
                     });
                 }
