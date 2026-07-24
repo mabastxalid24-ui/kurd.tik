@@ -93,7 +93,7 @@
 
         <div id="page-tasks" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-amber-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
                         <i class="fas fa-ad"></i>
@@ -104,6 +104,20 @@
                     </div>
                 </div>
                 <button onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold">View Task Ad (+coin0.20)</button>
+            </div>
+
+            <!-- دوگمەی نوێی Ad Rewards کە بەستراوەتەوە بە سمارت لینک -->
+            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <div>
+                        <p class="font-bold">Ad Rewards</p>
+                        <p class="text-xs text-slate-400">Click to visit partner link</p>
+                    </div>
+                </div>
+                <button onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold">Ad Rewards (Smart Link)</button>
             </div>
         </div>
 
@@ -149,6 +163,16 @@
         const db = firebase.firestore();
         const tg = window.Telegram.WebApp;
         tg.ready();
+
+        // فەنکشنی کردنەوەی سمارت لینک لەناو مینی ئەپدا بە ڕێگەی تلگرام
+        function openSmartLink() {
+            const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
+            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                window.Telegram.WebApp.openLink(smartUrl);
+            } else {
+                window.open(smartUrl, '_blank');
+            }
+        }
 
         function copyLink() {
             const linkElement = document.getElementById('invite-link');
