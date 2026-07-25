@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ku">
 <head>
     <meta charset="UTF-8">
@@ -36,10 +36,10 @@
                         </div>
                         <div>
                             <p class="font-bold">Watch Ad</p>
-                            <p class="text-xs text-slate-400">Complete video to earn instantly</p>
+                            <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                         </div>
                     </div>
-                    <button id="adButton" onclick="watchAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">+coin0.50</button>
+                    <button id="adButton" onclick="watchMainAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">Watch Ad (<span id="mainAdClickCountDisplay">0</span>/25)</button>
                 </div>
             </div>
             <div class="mt-3 px-1">
@@ -47,7 +47,7 @@
                     <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
                 </div>
                 <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next ad in: <span id="countdown">150</span>s</span>
+                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next click in: <span id="countdown">80000</span>s</span>
             </div>
 
             <!-- بەشی یارییەکان -->
@@ -100,11 +100,11 @@
                     </div>
                     <div>
                         <p class="font-bold">Interstitial Ad Task</p>
-                        <p class="text-xs text-slate-400">Watch and earn instant coins</p>
+                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                     </div>
                 </div>
-                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">View Task Ad (+coin0.50)</button>
-                <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">3000</span>s</span>
+                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">Interstitial Ad Task (<span id="taskAdClickCountDisplay">0</span>/25)</button>
+                <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">80000</span>s</span>
             </div>
 
             <!-- دوگمەی Ad Rewards کە پێویستی بە ٥ کلیک هەیە پێش دەستپێکردنی تایمەر -->
@@ -201,8 +201,8 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await startApp();
             
-            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'total-watched-number');
-            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null);
+            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay');
+            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay');
             checkFirebaseTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay');
             checkFirebaseTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', null);
             checkFirebaseTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', null);
@@ -225,11 +225,11 @@
 
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
-                    if (countSpan && displayId === 'clickCountDisplay') countSpan.innerText = clicks;
+                    if (countSpan) countSpan.innerText = clicks;
                 }
 
                 if (endTime) {
-                    const timeLeft = Math.floor((endTime - Date.now()) / 10);
+                    const timeLeft = Math.floor((endTime - Date.now()) / 1000);
                     if (timeLeft > 0) {
                         startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime);
                         return;
@@ -251,36 +251,72 @@
             const doc = await userRef.get();
             
             if (doc.exists && doc.data()[timeKey]) {
-                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 10);
+                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 1000);
                 if (timeLeft > 0) return;
             }
 
-            if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                window.Telegram.WebApp.openLink(url);
-            } else {
-                window.open(url, '_blank');
+            if (url) {
+                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+                    window.Telegram.WebApp.openLink(url);
+                } else {
+                    window.open(url, '_blank');
+                }
             }
 
             let clicks = (doc.exists && doc.data()[clicksKey]) ? doc.data()[clicksKey] : 0;
             clicks++;
             
             if (clicks >= targetClicks) {
-                const newEndTime = Date.now() + (100 * 100);
+                const newEndTime = Date.now() + (80000 * 1000);
                 await userRef.update({
                     [clicksKey]: 0,
-                    [timeKey]: newEndTime
+                    [timeKey]: newEndTime,
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
                 });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
                     if (countSpan) countSpan.innerText = '0';
                 }
                 startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, newEndTime);
+                alert("Completed! coin0.50 added.");
+                startApp();
             } else {
                 await userRef.update({ [clicksKey]: clicks });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
                     if (countSpan) countSpan.innerText = clicks;
                 }
+            }
+        }
+
+        async function watchMainAd() {
+            try {
+                if (!window.Adsgram) {
+                    alert("Adsgram script not loaded yet!");
+                    return;
+                }
+                const adController = window.Adsgram.init({ blockId: "39352" });
+                await adController.show();
+                handleMultiClickButton(null, 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay', 'adButton', 'timerText', 'countdown', 25);
+            } catch (e) {
+                console.log("Ad error or skipped", e);
+                alert("Ad was closed or not completed.");
+            }
+        }
+
+        async function watchTaskAd() {
+            try {
+                if (!window.Adsgram) {
+                    alert("Adsgram script not loaded yet!");
+                    return;
+                }
+                const adController = window.Adsgram.init({ blockId: "int-39419" });
+                await adController.show();
+                handleMultiClickButton(null, 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay', 'taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 25);
+            } catch (e) {
+                console.log("Ad error or skipped", e);
+                alert("Ad was closed or not completed.");
             }
         }
 
@@ -332,64 +368,6 @@
             document.getElementById('games-grid').classList.remove('hidden');
         }
 
-        async function watchAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                
-                const adController = window.Adsgram.init({ blockId: "39352" });
-                await adController.show();
-
-                const userId = await getUserId();
-                const userRef = db.collection('users').doc(userId);
-                await userRef.update({
-                    balance: firebase.firestore.FieldValue.increment(0.50),
-                    totalWatched: firebase.firestore.FieldValue.increment(1)
-                });
-
-                alert("Ad completed! coin0.50 added.");
-                const newEndTime = Date.now() + (100 * 100);
-                await userRef.update({ main_ad_end: newEndTime });
-                startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', null, newEndTime);
-                startApp();
-
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                alert("Ad was closed or not completed.");
-            }
-        }
-
-        async function watchTaskAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                
-                const adController = window.Adsgram.init({ blockId: "int-39419" });
-                await adController.show();
-
-                const userId = await getUserId();
-                const userRef = db.collection('users').doc(userId);
-                await userRef.update({
-                    balance: firebase.firestore.FieldValue.increment(0.50),
-                    totalWatched: firebase.firestore.FieldValue.increment(1)
-                });
-
-                alert("Task Ad completed! coin0.50 added.");
-                const newEndTime = Date.now() + (100 * 100);
-                await userRef.update({ task_ad_end: newEndTime });
-                startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null, newEndTime);
-                startApp();
-
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                alert("Ad was closed or not completed.");
-            }
-        }
-
         function startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime) {
             const btn = document.getElementById(btnId);
             const timerText = document.getElementById(textId);
@@ -404,7 +382,7 @@
             if (activeTimers[btnId]) clearInterval(activeTimers[btnId]);
 
             activeTimers[btnId] = setInterval(async function() {
-                let timeLeft = Math.floor((endTime - Date.now()) / 100);
+                let timeLeft = Math.floor((endTime - Date.now()) / 1000);
                 
                 if (timeLeft <= 0) {
                     clearInterval(activeTimers[btnId]);
@@ -420,7 +398,7 @@
                     
                     if (displayId) {
                         let countSpan = document.getElementById(displayId);
-                        if (countSpan && displayId === 'clickCountDisplay') countSpan.innerText = '0';
+                        if (countSpan) countSpan.innerText = '0';
                     }
                 } else {
                     if(countdownSpan) countdownSpan.textContent = timeLeft;
