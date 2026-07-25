@@ -350,7 +350,7 @@
                 });
 
                 alert("Ad completed! coin0.50 added.");
-                const newEndTime = Date.now() + (1000 * 1000);
+                const newEndTime = Date.now() + (100 * 100);
                 await userRef.update({ main_ad_end: newEndTime });
                 startCustomTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', null, newEndTime);
                 startApp();
@@ -379,7 +379,7 @@
                 });
 
                 alert("Task Ad completed! coin0.50 added.");
-                const newEndTime = Date.now() + (1000 * 1000);
+                const newEndTime = Date.now() + (100 * 100);
                 await userRef.update({ task_ad_end: newEndTime });
                 startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null, newEndTime);
                 startApp();
@@ -404,7 +404,7 @@
             if (activeTimers[btnId]) clearInterval(activeTimers[btnId]);
 
             activeTimers[btnId] = setInterval(async function() {
-                let timeLeft = Math.floor((endTime - Date.now()) / 1000);
+                let timeLeft = Math.floor((endTime - Date.now()) / 100);
                 
                 if (timeLeft <= 0) {
                     clearInterval(activeTimers[btnId]);
