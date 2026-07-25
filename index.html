@@ -229,7 +229,7 @@
                 }
 
                 if (endTime) {
-                    const timeLeft = Math.floor((endTime - Date.now()) / 1000);
+                    const timeLeft = Math.floor((endTime - Date.now()) / 10);
                     if (timeLeft > 0) {
                         startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime);
                         return;
@@ -251,7 +251,7 @@
             const doc = await userRef.get();
             
             if (doc.exists && doc.data()[timeKey]) {
-                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 1000);
+                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 10);
                 if (timeLeft > 0) return;
             }
 
