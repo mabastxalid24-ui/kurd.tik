@@ -93,6 +93,21 @@
 
         <div id="page-tasks" class="page hidden p-4">
             <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
+            
+            <!-- بنەرەی ڕیکلامی 468x60 -->
+            <div class="bg-white p-3 rounded-3xl border border-slate-200 shadow-sm mb-4 text-center overflow-hidden">
+                <script type="text/javascript">
+                    atOptions = {
+                        'key' : '230bcf773dbf339cf016f4fcac388ea8',
+                        'format' : 'iframe',
+                        'height' : 60,
+                        'width' : 468,
+                        'params' : {}
+                    };
+                </script>
+                <script type="text/javascript" src="//www.highperformanceformat.com/230bcf773dbf339cf016f4fcac388ea8/invoke.js"></script>
+            </div>
+
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-amber-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -399,7 +414,7 @@
             
             btn.disabled = true;
             btn.classList.add('opacity-50', 'cursor-not-allowed');
-            if(timerText) timerText.classList.remove('hidden');
+            if(timerText) timerText.classList.add('hidden'); // hidden لەگەڵ تایمەری خۆیدا مایەوە و دەستکاری نەکرا
 
             if (activeTimers[btnId]) clearInterval(activeTimers[btnId]);
 
