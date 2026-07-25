@@ -379,7 +379,7 @@
                 });
 
                 alert("Task Ad completed! coin0.50 added.");
-                const newEndTime = Date.now() + (3000 * 1000);
+                const newEndTime = Date.now() + (1000 * 1000);
                 await userRef.update({ task_ad_end: newEndTime });
                 startCustomTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null, newEndTime);
                 startApp();
