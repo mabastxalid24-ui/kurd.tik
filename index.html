@@ -265,7 +265,7 @@
             clicks++;
             
             if (clicks >= targetClicks) {
-                const newEndTime = Date.now() + (1000 * 1000);
+                const newEndTime = Date.now() + (100 * 100);
                 await userRef.update({
                     [clicksKey]: 0,
                     [timeKey]: newEndTime
