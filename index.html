@@ -246,7 +246,7 @@
             }
         }
 
-        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 25) {
+        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 1) {
             const userId = await getUserId();
             const userRef = db.collection('users').doc(userId);
             const doc = await userRef.get();
@@ -277,23 +277,17 @@
                 });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
-                    if (countSpan) countSpan.innerText = targetClicks;
+                    if (countSpan) countSpan.innerText = '0';
                 }
                 startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, newEndTime);
-                alert("Completed 25 clicks! coin0.50 added and timer locked.");
+                alert("Completed! coin0.50 added.");
                 startApp();
             } else {
-                await userRef.update({
-                    [clicksKey]: clicks,
-                    balance: firebase.firestore.FieldValue.increment(0.50),
-                    totalWatched: firebase.firestore.FieldValue.increment(1)
-                });
+                await userRef.update({ [clicksKey]: clicks });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
                     if (countSpan) countSpan.innerText = clicks;
                 }
-                alert("Ad watched! coin0.50 added.");
-                startApp();
             }
         }
 
