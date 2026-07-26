@@ -28,7 +28,7 @@
         <div id="page-ads" class="page">
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
                 <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
-                <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn coin0.50</p>
+                <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn coin0.50 per ad</p>
                 <div class="bg-slate-50 p-4 rounded-2xl border flex items-center justify-between">
                     <div class="flex items-center gap-3">
                         <div class="bg-slate-900 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -277,17 +277,23 @@
                 });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
-                    if (countSpan) countSpan.innerText = '0';
+                    if (countSpan) countSpan.innerText = '25';
                 }
                 startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, newEndTime);
                 alert("Completed! coin0.50 added.");
                 startApp();
             } else {
-                await userRef.update({ [clicksKey]: clicks });
+                await userRef.update({
+                    [clicksKey]: clicks,
+                    balance: firebase.firestore.FieldValue.increment(0.50),
+                    totalWatched: firebase.firestore.FieldValue.increment(1)
+                });
                 if (displayId) {
                     const countSpan = document.getElementById(displayId);
                     if (countSpan) countSpan.innerText = clicks;
                 }
+                alert("Ad watched! coin0.50 added.");
+                startApp();
             }
         }
 
