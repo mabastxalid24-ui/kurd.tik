@@ -36,10 +36,10 @@
                         </div>
                         <div>
                             <p class="font-bold">Watch Ad</p>
-                            <p class="text-xs text-slate-400">Click to watch and earn</p>
+                            <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                         </div>
                     </div>
-                    <button id="adButton" onclick="watchMainAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">Watch Ad</button>
+                    <button id="adButton" onclick="watchMainAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">Watch Ad (<span id="mainAdClickCountDisplay">0</span>/25)</button>
                 </div>
             </div>
             <div class="mt-3 px-1">
@@ -100,14 +100,14 @@
                     </div>
                     <div>
                         <p class="font-bold">Interstitial Ad Task</p>
-                        <p class="text-xs text-slate-400">Watch ad & earn coin0.50</p>
+                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
                     </div>
                 </div>
-                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">Interstitial Ad Task</button>
+                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">Interstitial Ad Task (<span id="taskAdClickCountDisplay">0</span>/25)</button>
                 <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">80000</span>s</span>
             </div>
 
-            <!-- دوگمەی Ad Rewards کە ڕاستەوخۆ کار دەکات -->
+            <!-- دوگمەی Ad Rewards کە پێویستی بە ٥ کلیک هەیە پێش دەستپێکردنی تایمەر -->
             <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
                 <div class="flex items-center gap-3 mb-3">
                     <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
@@ -115,10 +115,10 @@
                     </div>
                     <div>
                         <p class="font-bold">Ad Rewards</p>
-                        <p class="text-xs text-slate-400">Visit link & earn coin0.50</p>
+                        <p class="text-xs text-slate-400">Click 5 times to activate timer</p>
                     </div>
                 </div>
-                <button id="smartLinkBtn" onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold transition duration-200">Ad Rewards</button>
+                <button id="smartLinkBtn" onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold transition duration-200">Ad Rewards (<span id="clickCountDisplay">0</span>/5)</button>
                 <span id="smartLinkTimerText" class="text-xs font-bold text-orange-500 hidden mt-2 block">Next click in: <span id="smartLinkCountdown">1000</span>s</span>
             </div>
 
@@ -202,9 +202,9 @@
         window.addEventListener('DOMContentLoaded', async () => {
             await startApp();
             
-            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', null);
-            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', null);
-            checkFirebaseTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', null);
+            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay');
+            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay');
+            checkFirebaseTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay');
             checkFirebaseTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', null);
             checkFirebaseTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', null);
         });
@@ -246,7 +246,7 @@
             }
         }
 
-        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 1) {
+        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 25) {
             const userId = await getUserId();
             const userRef = db.collection('users').doc(userId);
             const doc = await userRef.get();
@@ -299,7 +299,7 @@
                 }
                 const adController = window.Adsgram.init({ blockId: "39352" });
                 await adController.show();
-                handleMultiClickButton(null, 'main_ad_end', 'main_ad_clicks', null, 'adButton', 'timerText', 'countdown', 1);
+                handleMultiClickButton(null, 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay', 'adButton', 'timerText', 'countdown', 25);
             } catch (e) {
                 console.log("Ad error or skipped", e);
                 alert("Ad was closed or not completed.");
@@ -314,7 +314,7 @@
                 }
                 const adController = window.Adsgram.init({ blockId: "int-39419" });
                 await adController.show();
-                handleMultiClickButton(null, 'task_ad_end', 'task_ad_clicks', null, 'taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 1);
+                handleMultiClickButton(null, 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay', 'taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 25);
             } catch (e) {
                 console.log("Ad error or skipped", e);
                 alert("Ad was closed or not completed.");
@@ -323,7 +323,7 @@
 
         function openSmartLink() {
             const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
-            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', null, 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 1);
+            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 5);
         }
 
         function openKurdtikLink1() {
