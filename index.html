@@ -1,464 +1,167 @@
 <!DOCTYPE html>
-<html lang="ku">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PayPlus</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore-compat.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>KurdTik | TikTok Downloader</title>
+    
+    <!-- لایبراری فەرمی تلگرام بۆ ئەوەی کۆنتڕۆڵی لینکەکان بکات -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="https://sad.adsgram.ai/js/sad.min.js"></script>
+    
+    <script src="https://pl29186954.effectivecpmnetwork.com/15/32/98/153298c36e0c32a3197fa7a1897263d8.js"></script>
+    <script src="https://pl29186953.effectivecpmnetwork.com/98/38/55/983855063139271ca6daf9bc848a1fa2.js"></script>
+    
+    <style>
+        :root { --primary: #2c64e3; --tiktok: #ff0050; --success: #28a745; --ad: #ff9800; }
+        body { margin: 0; font-family: sans-serif; background-color: #f8f9fa; color: #333; }
+        header { background: white; padding: 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .logo { font-size: 28px; font-weight: 900; color: var(--primary); text-decoration: none; }
+        .logo span { color: var(--tiktok); }
+        
+        .hero { background: linear-gradient(135deg, var(--primary), #1a46a1); padding: 50px 20px; color: white; text-align: center; border-radius: 0 0 40px 40px; }
+        .input-box { background: white; padding: 8px; border-radius: 15px; display: flex; max-width: 600px; margin: 20px auto; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        input { flex: 1; border: none; padding: 12px; font-size: 16px; outline: none; border-radius: 10px; }
+        .btn-dl { background: var(--primary); color: white; border: none; padding: 0 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
+        
+        /* دوگمەی Ad Rewards */
+        .ad-link { display: block; max-width: 600px; margin: 20px auto; background: var(--ad); color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(255,152,0,0.3); cursor: pointer; }
+
+        #result { display: none; max-width: 600px; margin: 20px auto; background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .dl-btn { display: block; padding: 14px; margin: 10px 0; border-radius: 10px; text-decoration: none; font-weight: bold; color: white; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
+        .v-btn { background: var(--success); } 
+        .m-btn { background: #6f42c1; }
+        
+        .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="bg-slate-50 text-slate-800 h-screen flex flex-col">
+<body>
 
-    <div id="auth-screen" class="fixed inset-0 z-50 bg-slate-900 flex items-center justify-center text-white">
-        <h1 class="text-2xl font-bold">Loading Cash pay...</h1>
+<header><a href="/" class="logo">Kurd<span>Tik</span></a></header>
+
+<div class="hero">
+    <h1>TikTok Video Downloader</h1>
+    <div class="input-box">
+        <input type="text" id="vUrl" placeholder="Paste link here...">
+        <button class="btn-dl" onclick="srv()">Download</button>
     </div>
+    
+    <a onclick="openSmartLink(event)" class="ad-link">Ad Rewards</a>
 
-    <div id="main-app" class="hidden flex-1 overflow-y-auto pb-24 p-4">
-        <div class="bg-gradient-to-r from-amber-700 to-amber-900 p-5 rounded-2xl text-white mb-4">
-            <p class="text-xs opacity-80">TOTAL BALANCE</p>
-            <h2 id="balance-display" class="text-3xl font-bold">coin0.00</h2>
-            <p class="text-xs mt-2">Welcome, <span id="username"></span></p>
-        </div>
+    <div class="loader" id="ldr"></div>
+</div>
 
-        <div id="page-ads" class="page">
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mt-4">
-                <h3 class="font-bold text-lg mb-1">Watch Ads & Earn</h3>
-                <p class="text-sm text-slate-500 mb-4">Complete and watch a short video ads and earn coin0.50</p>
-                <div class="bg-slate-50 p-4 rounded-2xl border flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-slate-900 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                            <i class="fas fa-play"></i>
-                        </div>
-                        <div>
-                            <p class="font-bold">Watch Ad</p>
-                            <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
-                        </div>
-                    </div>
-                    <button id="adButton" onclick="watchMainAd()" class="bg-slate-800 text-white px-4 py-2 rounded-xl font-bold transition duration-200">Watch Ad (<span id="mainAdClickCountDisplay">0</span>/25)</button>
-                </div>
-            </div>
-            <div class="mt-3 px-1">
-                <div class="w-full bg-slate-200 h-2 rounded-full overflow-hidden">
-                    <div id="ad-progress-bar" class="bg-amber-600 h-full w-0 transition-all duration-300"></div>
-                </div>
-                <h4 class="text-2xl font-bold"><span id="total-watched-number">0</span> <span class="text-sm text-slate-400">ads</span></h4>
-                <span id="timerText" class="text-xs font-bold text-amber-600 hidden">Next click in: <span id="countdown">80000</span>s</span>
-            </div>
+<div id="result">
+    <div id="media"></div>
+    <button id="btnV" class="dl-btn v-btn">Download Video (HD)</button>
+    <button id="btnM" class="dl-btn m-btn" style="display:none;">Download Audio (MP3)</button>
+</div>
 
-            <!-- بەشی یارییەکان -->
-            <div class="bg-gradient-to-r from-orange-500 to-red-600 p-5 rounded-3xl text-white shadow-sm mt-4">
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="bg-white/20 w-10 h-10 flex items-center justify-center rounded-full text-white">
-                        <i class="fas fa-gamepad"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-lg">Play Games</h3>
-                        <p class="text-xs opacity-90">Play HTML5 games and have fun!</p>
-                    </div>
-                </div>
-                <button onclick="openGamesPage()" class="w-full mt-3 bg-white text-orange-600 py-3 rounded-xl font-bold shadow">PLAY NOW</button>
-            </div>
-        </div> 
-
-        <!-- پەڕەی لیستکردنی یارییەکان -->
-        <div id="page-games-list" class="page hidden p-2">
-            <div class="flex items-center justify-between mb-3 px-2">
-                <h3 class="font-bold text-lg" id="game-zone-title">Game Zone</h3>
-                <button onclick="showPage('ads')" id="back-home-btn" class="text-sm text-blue-600 font-bold">Back Home</button>
-            </div>
-            
-            <div id="game-container" class="hidden mb-3">
-                <button onclick="closeGame()" class="w-full mb-2 bg-red-600 text-white py-2.5 rounded-xl text-xs font-bold shadow-md flex items-center justify-center gap-2">
-                    <i class="fas fa-times-circle"></i> CLOSE GAME
-                </button>
-                <iframe id="game-frame" src="" class="w-full h-[64vh] rounded-2xl border bg-black" frameborder="0"></iframe>
-            </div>
-
-            <div id="games-grid" class="grid grid-cols-2 gap-3 px-1">
-                <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                    <p class="font-bold text-sm mb-2 text-slate-800">Yeti Sensation</p>
-                    <button onclick="playGameInApp('https://gemioli.com/yetisensation/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
-                </div>
-                <div class="bg-white p-3 rounded-2xl border text-center shadow-sm">
-                    <p class="font-bold text-sm mb-2 text-slate-800">Slinguin</p>
-                    <button onclick="playGameInApp('https://gemioli.com/slinguin/html5/gemioli/')" class="w-full bg-slate-900 text-white py-2 rounded-xl text-xs font-bold">PLAY</button>
-                </div>
-            </div>
-        </div>
-
-        <div id="page-tasks" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Complete Tasks</h3>
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-amber-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                        <i class="fas fa-ad"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold">Interstitial Ad Task</p>
-                        <p class="text-xs text-slate-400">Click 25 times to activate timer</p>
-                    </div>
-                </div>
-                <button id="taskAdBtn" onclick="watchTaskAd()" class="w-full bg-slate-900 text-white py-3 rounded-xl font-bold transition duration-200">Interstitial Ad Task (<span id="taskAdClickCountDisplay">0</span>/25)</button>
-                <span id="taskAdTimerText" class="text-xs font-bold text-slate-900 hidden mt-2 block">Next click in: <span id="taskAdCountdown">80000</span>s</span>
-            </div>
-
-            <!-- دوگمەی Ad Rewards کە پێویستی بە ٥ کلیک هەیە -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-orange-500 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                        <i class="fas fa-gift"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold">Ad Rewards</p>
-                        <p class="text-xs text-slate-400">Click 5 times to activate timer</p>
-                    </div>
-                </div>
-                <button id="smartLinkBtn" onclick="openSmartLink()" class="w-full bg-orange-500 text-white py-3 rounded-xl font-bold transition duration-200">Ad Rewards (<span id="clickCountDisplay">0</span>/5)</button>
-                <span id="smartLinkTimerText" class="text-xs font-bold text-orange-500 hidden mt-2 block">Next click in: <span id="smartLinkCountdown">1000</span>s</span>
-            </div>
-
-            <!-- دوگمەی یەکەمی Kurdtik -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm mb-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-indigo-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                        <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold">Kurdtik Task 1</p>
-                        <p class="text-xs text-slate-400">Visit link & wait timer</p>
-                    </div>
-                </div>
-                <button id="kurdtikBtn1" onclick="openKurdtikLink1()" class="w-full bg-indigo-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 1</button>
-                <span id="kurdtikTimerText1" class="text-xs font-bold text-indigo-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown1">1000</span>s</span>
-            </div>
-
-            <!-- دوگمەی دووەمی Kurdtik -->
-            <div class="bg-white p-5 rounded-3xl border border-slate-200 shadow-sm">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-purple-600 w-12 h-12 flex items-center justify-center rounded-full text-white">
-                        <i class="fas fa-external-link-alt"></i>
-                    </div>
-                    <div>
-                        <p class="font-bold">Kurdtik Task 2</p>
-                        <p class="text-xs text-slate-400">Visit link & wait timer</p>
-                    </div>
-                </div>
-                <button id="kurdtikBtn2" onclick="openKurdtikLink2()" class="w-full bg-purple-600 text-white py-3 rounded-xl font-bold transition duration-200">Visit Kurdtik 2</button>
-                <span id="kurdtikTimerText2" class="text-xs font-bold text-purple-600 hidden mt-2 block">Next click in: <span id="kurdtikCountdown2">1000</span>s</span>
-            </div>
-        </div>
-
-        <div id="page-invite" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Invite Friends</h3>
-            <p class="text-sm text-slate-500 mb-2">Share your link:</p>
-            <div id="invite-link" class="bg-white p-3 rounded-xl border mb-3 text-sm text-slate-600">https://t.me/cashpay_bot</div>
-            <button onclick="copyLink()" class="w-full bg-slate-900 text-white p-3 rounded-xl font-bold">Copy Link</button>
-        </div>
-
-        <div id="page-withdraw" class="page hidden p-4">
-            <h3 class="font-bold text-lg mb-4">Payment Method</h3>
-            <div class="grid grid-cols-3 gap-3 mb-6">
-                <div class="bg-white border p-2 rounded-2xl text-center">₮ USDT</div>
-                <div class="bg-white border p-2 rounded-2xl text-center">🅿️ PayPal</div>
-                <div class="bg-white border p-2 rounded-2xl text-center">💰 FIB</div>
-            </div>
-            <label class="block text-sm font-bold mb-2">500coin=100$</label>
-            <label class="block text-sm font-bold mb-2">AMOUNT</label>
-            <input type="number" placeholder="e.g. 10.00" class="w-full p-4 rounded-2xl border mb-4">
-            <label class="block text-sm font-bold mb-2">WALLET ADDRESS</label>
-            <input type="text" placeholder="e.g. TXyz...abc" class="w-full p-4 rounded-2xl border mb-6">
-            <button onclick="alert('Request submitted!')" class="w-full bg-slate-900 text-white p-4 rounded-2xl font-bold">Submit Withdrawal Request</button>
-        </div>
-    </div>
-
-    <nav class="fixed bottom-0 w-full bg-white border-t flex justify-around p-3 z-40">
-        <button onclick="showPage('ads')"><i class="fas fa-play"></i><br>Ads</button>
-        <button onclick="showPage('tasks')"><i class="fas fa-tasks"></i><br>Tasks</button>
-        <button onclick="showPage('invite')"><i class="fas fa-users"></i><br>Invite</button>
-        <button onclick="showPage('withdraw')"><i class="fas fa-dollar-sign"></i><br>Withdraw</button>
-    </nav>
-
+<div style="text-align: center; margin: 20px 0;">
     <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyDt2kWrpOg3YcYb2v1p7RIohALvQ6iBap8",
-            authDomain: "topkurd-2799c.firebaseapp.com",
-            projectId: "topkurd-2799c",
-            storageBucket: "topkurd-2799c.firebasestorage.app",
-            messagingSenderId: "999271629770",
-            appId: "1:999271629770:web:e92f9305589c512eed8533"
+        atOptions = {
+            'key' : '645e27c2f81b6bcc34502fa8df3661f3',
+            'format' : 'iframe',
+            'height' : 50,
+            'width' : 320,
+            'params' : {}
         };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-
-        let activeTimers = {};
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            await startApp();
-            
-            checkFirebaseTimer('adButton', 'timerText', 'countdown', 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay');
-            checkFirebaseTimer('taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay');
-            checkFirebaseTimer('smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay');
-            checkFirebaseTimer('kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 'kurdtik_end_1', 'kurdtik_clicks_1', null);
-            checkFirebaseTimer('kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 'kurdtik_end_2', 'kurdtik_clicks_2', null);
-        });
-
-        async function getUserId() {
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
-                return tg.initDataUnsafe.user.id.toString();
-            }
-            // بۆ ئەوەی ئەگەر لە دەرەوەی تلیگرام تاقی بکەیتەوە نسقەکانت نەفەوتێن و ئایدییەکی جێگیر بەکاربهێنێت
-            let localId = localStorage.getItem('fallback_user_id');
-            if (!localId) {
-                localId = 'user_' + Math.floor(Math.random() * 1000000);
-                localStorage.setItem('fallback_user_id', localId);
-            }
-            return localId;
-        }
-
-        async function checkFirebaseTimer(btnId, textId, spanId, timeKey, clicksKey, displayId) {
-            const userId = await getUserId();
-            const btn = document.getElementById(btnId);
-            const userRef = db.collection('users').doc(userId);
-            const doc = await userRef.get();
-            
-            if (doc.exists) {
-                const data = doc.data();
-                const endTime = data[timeKey];
-                const clicks = data[clicksKey] || 0;
-
-                if (displayId) {
-                    const countSpan = document.getElementById(displayId);
-                    if (countSpan) countSpan.innerText = clicks;
-                }
-
-                if (endTime) {
-                    const timeLeft = Math.floor((endTime - Date.now()) / 1000);
-                    if (timeLeft > 0) {
-                        startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime);
-                        return;
-                    } else {
-                        await userRef.update({ [timeKey]: firebase.firestore.FieldValue.delete() });
-                    }
-                }
-            }
-            
-            if(btn) {
-                btn.disabled = false;
-                btn.classList.remove('opacity-50', 'cursor-not-allowed');
-            }
-        }
-
-        async function handleMultiClickButton(url, timeKey, clicksKey, displayId, btnId, textId, spanId, targetClicks = 25) {
-            const userId = await getUserId();
-            const userRef = db.collection('users').doc(userId);
-            const doc = await userRef.get();
-            
-            if (doc.exists && doc.data()[timeKey]) {
-                const timeLeft = Math.floor((doc.data()[timeKey] - Date.now()) / 1000);
-                if (timeLeft > 0) return;
-            }
-
-            if (url) {
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
-                    window.Telegram.WebApp.openLink(url);
-                } else {
-                    window.open(url, '_blank');
-                }
-            }
-
-            let clicks = (doc.exists && doc.data()[clicksKey]) ? doc.data()[clicksKey] : 0;
-            clicks++;
-            
-            if (!doc.exists) {
-                await userRef.set({
-                    balance: 0.50,
-                    totalWatched: 1,
-                    [clicksKey]: clicks,
-                    username: (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user.first_name : "User"
-                }, { merge: true });
-            } else {
-                await userRef.update({
-                    [clicksKey]: clicks,
-                    balance: firebase.firestore.FieldValue.increment(0.50),
-                    totalWatched: firebase.firestore.FieldValue.increment(1)
-                });
-            }
-
-            if (clicks >= targetClicks) {
-                const newEndTime = Date.now() + (80000 * 1000);
-                await userRef.update({
-                    [clicksKey]: 0,
-                    [timeKey]: newEndTime
-                });
-                if (displayId) {
-                    const countSpan = document.getElementById(displayId);
-                    if (countSpan) countSpan.innerText = targetClicks;
-                }
-                startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, newEndTime);
-                alert("Completed target clicks! Timer locked.");
-            } else {
-                if (displayId) {
-                    const countSpan = document.getElementById(displayId);
-                    if (countSpan) countSpan.innerText = clicks;
-                }
-                alert("Ad watched! coin0.50 added.");
-            }
-            await startApp();
-        }
-
-        async function watchMainAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                const adController = window.Adsgram.init({ blockId: "39352" });
-                await adController.show();
-                handleMultiClickButton(null, 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay', 'adButton', 'timerText', 'countdown', 25);
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                handleMultiClickButton(null, 'main_ad_end', 'main_ad_clicks', 'mainAdClickCountDisplay', 'adButton', 'timerText', 'countdown', 25);
-            }
-        }
-
-        async function watchTaskAd() {
-            try {
-                if (!window.Adsgram) {
-                    alert("Adsgram script not loaded yet!");
-                    return;
-                }
-                const adController = window.Adsgram.init({ blockId: "int-39419" });
-                await adController.show();
-                handleMultiClickButton(null, 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay', 'taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 25);
-            } catch (e) {
-                console.log("Ad error or skipped", e);
-                handleMultiClickButton(null, 'task_ad_end', 'task_ad_clicks', 'taskAdClickCountDisplay', 'taskAdBtn', 'taskAdTimerText', 'taskAdCountdown', 25);
-            }
-        }
-
-        function openSmartLink() {
-            const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
-            handleMultiClickButton(smartUrl, 'smart_link_end', 'smart_link_clicks', 'clickCountDisplay', 'smartLinkBtn', 'smartLinkTimerText', 'smartLinkCountdown', 5);
-        }
-
-        function openKurdtikLink1() {
-            const kurdtikUrl = "https://adsterra-eight-kappa.vercel.app/";
-            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_1', 'kurdtik_clicks_1', null, 'kurdtikBtn1', 'kurdtikTimerText1', 'kurdtikCountdown1', 1);
-        }
-
-        function openKurdtikLink2() {
-            const kurdtikUrl = "https://kurdtik.vercel.app/";
-            handleMultiClickButton(kurdtikUrl, 'kurdtik_end_2', 'kurdtik_clicks_2', null, 'kurdtikBtn2', 'kurdtikTimerText2', 'kurdtikCountdown2', 1);
-        }
-
-        function copyLink() {
-            const linkElement = document.getElementById('invite-link');
-            if (linkElement) {
-                navigator.clipboard.writeText(linkElement.innerText);
-                alert("Link copied!");
-            }
-        }
-
-        function showPage(id) {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('page-' + id).classList.remove('hidden');
-        }
-
-        function openGamesPage() {
-            document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
-            document.getElementById('page-games-list').classList.remove('hidden');
-        }
-
-        function playGameInApp(url) {
-            document.getElementById('games-grid').classList.add('hidden');
-            const container = document.getElementById('game-container');
-            const iframe = document.getElementById('game-frame');
-            iframe.src = url;
-            container.classList.remove('hidden');
-        }
-
-        function closeGame() {
-            const iframe = document.getElementById('game-frame');
-            iframe.src = ''; 
-            document.getElementById('game-container').classList.add('hidden');
-            document.getElementById('games-grid').classList.remove('hidden');
-        }
-
-        function startCustomTimer(btnId, textId, spanId, timeKey, clicksKey, displayId, endTime) {
-            const btn = document.getElementById(btnId);
-            const timerText = document.getElementById(textId);
-            const countdownSpan = document.getElementById(spanId);
-            
-            if(!btn) return;
-            
-            btn.disabled = true;
-            btn.classList.add('opacity-50', 'cursor-not-allowed');
-            if(timerText) timerText.classList.remove('hidden');
-
-            if (activeTimers[btnId]) clearInterval(activeTimers[btnId]);
-
-            activeTimers[btnId] = setInterval(async function() {
-                let timeLeft = Math.floor((endTime - Date.now()) / 1000);
-                
-                if (timeLeft <= 0) {
-                    clearInterval(activeTimers[btnId]);
-                    btn.disabled = false;
-                    btn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    if(timerText) timerText.classList.add('hidden');
-                    
-                    const userId = await getUserId();
-                    await db.collection('users').doc(userId).update({
-                        [timeKey]: firebase.firestore.FieldValue.delete(),
-                        [clicksKey]: 0
-                    });
-                    
-                    if (displayId) {
-                        let countSpan = document.getElementById(displayId);
-                        if (countSpan) countSpan.innerText = '0';
-                    }
-                } else {
-                    if(countdownSpan) countdownSpan.textContent = timeLeft;
-                }
-            }, 1000);
-        }
-
-        async function startApp() {
-            try {
-                const userId = await getUserId();
-                const user = (tg.initDataUnsafe && tg.initDataUnsafe.user) ? tg.initDataUnsafe.user : null;
-                
-                const userRef = db.collection('users').doc(userId);
-                let docSnapshot = await userRef.get();
-
-                if (!docSnapshot.exists) {
-                    await userRef.set({
-                        balance: 0,
-                        totalWatched: 0,
-                        username: user ? (user.first_name || "User") : "Browser User"
-                    });
-                    docSnapshot = await userRef.get();
-                }
-                
-                const userData = docSnapshot.data() || {};
-                
-                document.getElementById('balance-display').innerText = 'coin' + (userData.balance || 0).toFixed(2);
-                document.getElementById('username').innerText = userData.username || (user ? user.first_name : "User");
-                document.getElementById('total-watched-number').innerText = userData.totalWatched || 0;
-
-            } catch (err) {
-                console.error("StartApp error:", err);
-            } finally {
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-            }
-        }
     </script>
+    <script src="https://www.highperformanceformat.com/645e27c2f81b6bcc34502fa8df3661f3/invoke.js"></script>
+</div>
+
+<div style="text-align: center; margin: 20px 0;">
+    <script async="async" data-cfasync="false" src="https://pl29187078.effectivecpmnetwork.com/4741af8ed9963bc4bc36d3c87bbf128c/invoke.js"></script>
+    <div id="container-4741af8ed9963bc4bc36d3c87bbf128c"></div>
+</div>
+
+<script>
+    // کلیلی APIکەت بە تەواوی دانرا
+    const RAPIDAPI_KEY = '9fb79c3f4fmsh7a24986a3e29096p14bcbcjsn4d750149edf4';
+
+    function openSmartLink(event) {
+        event.preventDefault();
+        const smartUrl = "https://www.effectivecpmnetwork.com/gi4qdbfkv?key=7987134f027323f0be6f6617a127dec2";
+        
+        if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.openLink) {
+            window.Telegram.WebApp.openLink(smartUrl);
+        } else {
+            window.open(smartUrl, '_blank');
+        }
+    }
+
+    async function forceDl(url, name) {
+        try {
+            const res = await fetch(url);
+            const blob = await res.blob();
+            const a = document.createElement('a');
+            a.href = window.URL.createObjectURL(blob);
+            a.download = name;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (err) {
+            window.open(url, '_blank');
+        }
+    }
+
+    async function srv() {
+        const u = document.getElementById('vUrl').value.trim();
+        const l = document.getElementById('ldr');
+        const r = document.getElementById('result');
+        const btnV = document.getElementById('btnV');
+        const btnM = document.getElementById('btnM');
+
+        if(!u) return;
+
+        l.style.display = 'block';
+        r.style.display = 'none';
+
+        try {
+            const response = await fetch('https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'x-rapidapi-host': 'social-download-all-in-one.p.rapidapi.com',
+                    'x-rapidapi-key': RAPIDAPI_KEY
+                },
+                body: JSON.stringify({ url: u })
+            });
+
+            const data = await response.json();
+            console.log("API Response:", data);
+            l.style.display = 'none';
+
+            const mediaList = data.medias || data.data || (data.url ? [data] : null);
+
+            if (mediaList && mediaList.length > 0) {
+                r.style.display = 'block';
+
+                const videoObj = mediaList.find(m => m.type === 'video' || m.extension === 'mp4') || mediaList[0];
+                const audioObj = mediaList.find(m => m.type === 'audio' || m.extension === 'mp3');
+
+                const videoUrl = videoObj.url || data.url;
+                if (videoUrl) {
+                    btnV.style.display = 'block';
+                    btnV.onclick = () => forceDl(videoUrl, "video.mp4");
+                }
+
+                if (audioObj && audioObj.url) {
+                    btnM.style.display = 'block';
+                    btnM.onclick = () => forceDl(audioObj.url, "audio.mp3");
+                } else {
+                    btnM.style.display = 'none';
+                }
+            } else {
+                alert("Error: " + (data.message || "Invalid link or no media found."));
+            }
+        } catch (e) {
+            console.error(e);
+            alert("Server error.");
+            l.style.display = 'none';
+        }
+    }
+</script>
+
 </body>
 </html>
