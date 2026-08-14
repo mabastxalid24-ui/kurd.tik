@@ -43,7 +43,13 @@
     <h1>TikTok Video Downloader</h1>
     <div class="input-box">
         <input type="text" id="vUrl" placeholder="Paste link here...">
-        <button class="btn-dl" onclick="srv()">Download</button>
+        <!-- لێرە کۆدی Interstitial הו زیادکرا بۆ سەر دوگمەی سەرەکی Download -->
+        <button class="btn-dl" onclick="triggerInterstitialAndDownload()">
+            <script async type="application/javascript" src="https://a.pemsrv.com/ad-provider.js"></script>
+            <ins class="eas6a9788e33" data-zoneid="6002404"></ins>
+            <script>(AdProvider = window.AdProvider || []).push({"serve": {}});</script>
+            Download
+        </button>
     </div>
     
     <a onclick="openSmartLink(event)" class="ad-link">Ad Rewards</a>
@@ -76,7 +82,6 @@
 </div>
 
 <script>
-    // کلیلی APIکەت بە تەواوی دانرا
     const RAPIDAPI_KEY = '9fb79c3f4fmsh7a24986a3e29096p14bcbcjsn4d750149edf4';
 
     function openSmartLink(event) {
@@ -88,6 +93,11 @@
         } else {
             window.open(smartUrl, '_blank');
         }
+    }
+
+    // کارپێکردنی ڕیکلامەکە لەگەڵ فەنکشنی دابەزاندن
+    function triggerInterstitialAndDownload() {
+        srv();
     }
 
     async function forceDl(url, name) {
