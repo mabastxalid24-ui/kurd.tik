@@ -33,6 +33,9 @@
         
         .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        /* بۆ ڕێکخستنی ئەبمیدی تیکتۆک */
+        .tiktok-embed { margin: 0 auto !important; }
     </style>
 </head>
 <body>
@@ -43,7 +46,6 @@
     <h1>TikTok Video Downloader</h1>
     <div class="input-box">
         <input type="text" id="vUrl" placeholder="Paste link here...">
-        <!-- لێرە کۆدی Interstitial הו زیادکرا بۆ سەر دوگمەی سەرەکی Download -->
         <button class="btn-dl" onclick="triggerInterstitialAndDownload()">
             <script async type="application/javascript" src="https://a.pemsrv.com/ad-provider.js"></script>
             <ins class="eas6a9788e33" data-zoneid="6002404"></ins>
@@ -58,7 +60,18 @@
 </div>
 
 <div id="result">
-    <div id="media"></div>
+    <div id="media">
+        <!-- لێرە کۆدی ئەبمیدی تیکتۆک داندرا -->
+        <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@with_hawa/video/7673985010830953735" data-video-id="7673985010830953735" style="max-width: 605px;min-width: 325px;" > 
+            <section> 
+                <a target="_blank" title="@with_hawa" href="https://www.tiktok.com/@with_hawa?refer=embed">@with_hawa</a> 💔
+                <a title="hawpaeman" target="_blank" href="https://www.tiktok.com/tag/hawpaeman?refer=embed">#hawpaeman</a> 
+                <a title="foryou" target="_blank" href="https://www.tiktok.com/tag/foryou?refer=embed">#foryou</a> 
+                <a target="_blank" title="♬ original sound - ﮼هاوە فۆریوو💎" href="https://www.tiktok.com/music/original-sound-7673985184437390087?refer=embed">♬ original sound - ﮼هاوە فۆریوو💎</a> 
+            </section> 
+        </blockquote> 
+        <script async src="https://www.tiktok.com/embed.js"></script>
+    </div>
     <button id="btnV" class="dl-btn v-btn">Download Video (HD)</button>
     <button id="btnM" class="dl-btn m-btn" style="display:none;">Download Audio (MP3)</button>
 </div>
@@ -95,7 +108,6 @@
         }
     }
 
-    // کارپێکردنی ڕیکلامەکە لەگەڵ فەنکشنی دابەزاندن
     function triggerInterstitialAndDownload() {
         srv();
     }
