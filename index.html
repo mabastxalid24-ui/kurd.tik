@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>KurdTik | TikTok Downloader</title>
     
-    <!-- لایبراری فەرمی تلگرام بۆ ئەوەی کۆنتڕۆڵی لینکەکان بکات -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <script src="https://pl29186954.effectivecpmnetwork.com/15/32/98/153298c36e0c32a3197fa7a1897263d8.js"></script>
@@ -23,10 +22,10 @@
         input { flex: 1; border: none; padding: 12px; font-size: 16px; outline: none; border-radius: 10px; }
         .btn-dl { background: var(--primary); color: white; border: none; padding: 0 20px; font-weight: bold; border-radius: 10px; cursor: pointer; }
         
-        /* دوگمەی Ad Rewards */
         .ad-link { display: block; max-width: 600px; margin: 20px auto; background: var(--ad); color: white; text-align: center; padding: 15px; border-radius: 15px; text-decoration: none; font-weight: bold; box-shadow: 0 5px 15px rgba(255,152,0,0.3); cursor: pointer; }
 
-        #result { display: none; max-width: 600px; margin: 20px auto; background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        /* قاڵبی ڤیدیۆ لێرەدا هەمیشە کراوە و دیار دەبێت بۆ ئەوەی ون نەبێت */
+        #result { display: block; max-width: 600px; margin: 20px auto; background: white; padding: 25px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
         .dl-btn { display: block; padding: 14px; margin: 10px 0; border-radius: 10px; text-decoration: none; font-weight: bold; color: white; cursor: pointer; border: none; width: 100%; box-sizing: border-box; }
         .v-btn { background: var(--success); } 
         .m-btn { background: #6f42c1; }
@@ -34,7 +33,6 @@
         .loader { display: none; margin: 20px auto; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        /* بۆ ڕێکخستنی ئەبمیدی تیکتۆک */
         .tiktok-embed { margin: 0 auto !important; }
     </style>
 </head>
@@ -59,9 +57,9 @@
     <div class="loader" id="ldr"></div>
 </div>
 
+<!-- قاڵبی سەرەکی ڤیدیۆ کە لەسەر سایتەکە بە روونی دەردەکەوێت -->
 <div id="result">
     <div id="media">
-        <!-- لێرە کۆدی ئەبمیدی تیکتۆک داندرا -->
         <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@with_hawa/video/7673985010830953735" data-video-id="7673985010830953735" style="max-width: 605px;min-width: 325px;" > 
             <section> 
                 <a target="_blank" title="@with_hawa" href="https://www.tiktok.com/@with_hawa?refer=embed">@with_hawa</a> 💔
@@ -73,7 +71,7 @@
         <script async src="https://www.tiktok.com/embed.js"></script>
     </div>
     <button id="btnV" class="dl-btn v-btn">Download Video (HD)</button>
-    <button id="btnM" class="dl-btn m-btn" style="display:none;">Download Audio (MP3)</button>
+    <button id="btnM" class="dl-btn m-btn">Download Audio (MP3)</button>
 </div>
 
 <div style="text-align: center; margin: 20px 0;">
@@ -130,14 +128,12 @@
     async function srv() {
         const u = document.getElementById('vUrl').value.trim();
         const l = document.getElementById('ldr');
-        const r = document.getElementById('result');
         const btnV = document.getElementById('btnV');
         const btnM = document.getElementById('btnM');
 
         if(!u) return;
 
         l.style.display = 'block';
-        r.style.display = 'none';
 
         try {
             const response = await fetch('https://social-download-all-in-one.p.rapidapi.com/v1/social/autolink', {
@@ -157,8 +153,6 @@
             const mediaList = data.medias || data.data || (data.url ? [data] : null);
 
             if (mediaList && mediaList.length > 0) {
-                r.style.display = 'block';
-
                 const videoObj = mediaList.find(m => m.type === 'video' || m.extension === 'mp4') || mediaList[0];
                 const audioObj = mediaList.find(m => m.type === 'audio' || m.extension === 'mp3');
 
